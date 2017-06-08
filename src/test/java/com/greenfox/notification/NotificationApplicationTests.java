@@ -31,19 +31,19 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 @EnableWebMvc
 public class NotificationApplicationTests {
-	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-					MediaType.APPLICATION_JSON.getSubtype(),
-					Charset.forName("utf8"));
-	private MockMvc mockMvc;
+  private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
+          MediaType.APPLICATION_JSON.getSubtype(),
+          Charset.forName("utf8"));
+  private MockMvc mockMvc;
 
-	@Autowired
-	private WebApplicationContext webApplicationContext;
+  @Autowired
+  private WebApplicationContext webApplicationContext;
 
-	@Autowired
+  @Autowired
   private HeartbeatRepository heartbeatRepositoryMock;
 
-	@Before
-	public void setup() throws Exception {
+  @Before
+  public void setup() throws Exception {
     heartbeatRepositoryMock = Mockito.mock(HeartbeatRepository.class);
     Mockito.reset(heartbeatRepositoryMock);
     this.mockMvc = webAppContextSetup(webApplicationContext).build();
@@ -69,16 +69,16 @@ public class NotificationApplicationTests {
 
   @Test
   public void testResponseLogicWithEmptyRepo() throws Exception {
-	  when(heartbeatRepositoryMock.count()).thenReturn(0L);
-	  ResponseValidator responseValidator = new ResponseValidator(heartbeatRepositoryMock);
-	  DatabaseResponse object = (DatabaseResponse) responseValidator.checkForResponse();
+    when(heartbeatRepositoryMock.count()).thenReturn(0L);
+    ResponseValidator responseValidator = new ResponseValidator(heartbeatRepositoryMock);
+    DatabaseResponse object = (DatabaseResponse) responseValidator.checkForResponse();
     assertEquals("ok", object.getStatus());
     assertEquals("error", object.getDatabase());
   }
 
   @Test
   public void testResponseLogicWithNotEmptyRepo() throws Exception {
-	  heartbeatRepositoryMock.save(new Hearthbeat());
+    heartbeatRepositoryMock.save(new Hearthbeat());
     when(heartbeatRepositoryMock.count()).thenReturn(1L);
     ResponseValidator responseValidator = new ResponseValidator(heartbeatRepositoryMock);
     DatabaseResponse object = (DatabaseResponse) responseValidator.checkForResponse();
