@@ -1,6 +1,7 @@
 package com.greenfox.notification;
 
 import com.greenfox.notification.model.DatabaseResponse;
+import com.greenfox.notification.model.Hearthbeat;
 import com.greenfox.notification.repository.HeartbeatRepository;
 import com.greenfox.notification.service.ResponseValidator;
 import org.junit.*;
@@ -73,5 +74,15 @@ public class NotificationApplicationTests {
 	  DatabaseResponse object = (DatabaseResponse) responseValidator.checkForResponse();
     assertEquals("ok", object.getStatus());
     assertEquals("error", object.getDatabase());
+  }
+
+  @Test
+  public void testResponseLogicWithNotEmptyRepo() throws Exception {
+	  heartbeatRepositoryMock.save(new Hearthbeat());
+    when(heartbeatRepositoryMock.count()).thenReturn(1L);
+    ResponseValidator responseValidator = new ResponseValidator(heartbeatRepositoryMock);
+    DatabaseResponse object = (DatabaseResponse) responseValidator.checkForResponse();
+    assertEquals("ok", object.getStatus());
+    assertEquals("ok", object.getDatabase());
   }
 }
