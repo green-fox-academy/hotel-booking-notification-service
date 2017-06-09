@@ -1,10 +1,20 @@
 package com.greenfox.notification;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
 import com.greenfox.notification.model.DatabaseResponse;
 import com.greenfox.notification.model.Hearthbeat;
 import com.greenfox.notification.repository.HeartbeatRepository;
 import com.greenfox.notification.service.ResponseValidator;
-import org.junit.*;
+import java.nio.charset.Charset;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +25,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import java.nio.charset.Charset;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = NotificationApplication.class)
@@ -85,4 +85,5 @@ public class NotificationApplicationTests {
     assertEquals("ok", object.getStatus());
     assertEquals("ok", object.getDatabase());
   }
+  
 }
