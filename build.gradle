@@ -30,6 +30,6 @@ dependencies {
     runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('mysql:mysql-connector-java')
 	runtime('org.postgresql:postgresql')
-	compile('org.projectlombok:lombok')
+	compileOnly('org.projectlombok:lombok:1.14.8')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
