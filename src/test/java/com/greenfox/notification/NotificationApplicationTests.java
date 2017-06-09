@@ -42,6 +42,9 @@ public class NotificationApplicationTests {
   @Autowired
   private HeartbeatRepository heartbeatRepositoryMock;
 
+  @Autowired
+  private HeartbeatRepository heartbeatRepository;
+
   @Before
   public void setup() throws Exception {
     heartbeatRepositoryMock = Mockito.mock(HeartbeatRepository.class);
@@ -60,11 +63,13 @@ public class NotificationApplicationTests {
 
   @Test
   public void testGetWithNotEmptyTable() throws Exception {
+    heartbeatRepository.save(new Hearthbeat());
     mockMvc.perform(get("/hearthbeat"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(contentType))
             .andExpect(jsonPath("$.status").value("ok"))
             .andExpect(jsonPath("$.database").value("ok"));
+    heartbeatRepository.deleteAll();
   }
 
   @Test
@@ -85,5 +90,5 @@ public class NotificationApplicationTests {
     assertEquals("ok", object.getStatus());
     assertEquals("ok", object.getDatabase());
   }
-  
+
 }
