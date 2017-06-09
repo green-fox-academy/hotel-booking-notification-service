@@ -90,5 +90,4 @@ public class NotificationApplicationTests {
     assertEquals("ok", object.getStatus());
     assertEquals("ok", object.getDatabase());
   }
-
 }
