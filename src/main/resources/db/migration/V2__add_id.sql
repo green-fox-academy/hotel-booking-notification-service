@@ -1,4 +1,4 @@
-ALTER TABLE `heartbeat`
-	ADD COLUMN `id` INT NOT NULL;
+ALTER TABLE "heartbeat"
+	ADD COLUMN "id" INT NOT NULL;
 # 	DROP PRIMARY KEY,
 # 	ADD PRIMARY KEY (`id`);
