@@ -1,1 +1,1 @@
-create table hearthbeat (status bit not null, primary key (status))
+create table heartbeat (status bit not null, primary key (status))

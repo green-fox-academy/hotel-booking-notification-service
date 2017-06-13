@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import com.greenfox.notification.model.DatabaseResponse;
-import com.greenfox.notification.model.Hearthbeat;
+import com.greenfox.notification.model.Heartbeat;
 import com.greenfox.notification.repository.HeartbeatRepository;
 import com.greenfox.notification.service.ResponseValidator;
 import java.nio.charset.Charset;
@@ -54,7 +54,7 @@ public class NotificationApplicationTests {
 
   @Test
   public void testGetWithEmptyTable() throws Exception {
-    mockMvc.perform(get("/hearthbeat"))
+    mockMvc.perform(get("/heartbeat"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(contentType))
             .andExpect(jsonPath("$.status").value("ok"))
@@ -63,8 +63,8 @@ public class NotificationApplicationTests {
 
   @Test
   public void testGetWithNotEmptyTable() throws Exception {
-    heartbeatRepository.save(new Hearthbeat());
-    mockMvc.perform(get("/hearthbeat"))
+    heartbeatRepository.save(new Heartbeat());
+    mockMvc.perform(get("/heartbeat"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(contentType))
             .andExpect(jsonPath("$.status").value("ok"))
@@ -83,7 +83,7 @@ public class NotificationApplicationTests {
 
   @Test
   public void testResponseLogicWithNotEmptyRepo() throws Exception {
-    heartbeatRepositoryMock.save(new Hearthbeat());
+    heartbeatRepositoryMock.save(new Heartbeat());
     when(heartbeatRepositoryMock.count()).thenReturn(1L);
     ResponseValidator responseValidator = new ResponseValidator(heartbeatRepositoryMock);
     DatabaseResponse object = (DatabaseResponse) responseValidator.checkForResponse();
