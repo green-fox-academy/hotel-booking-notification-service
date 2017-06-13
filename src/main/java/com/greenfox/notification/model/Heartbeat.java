@@ -9,11 +9,11 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
-public class Hearthbeat {
+public class Heartbeat {
   @Id
   private Boolean status;
 
-  public Hearthbeat(){
+  public Heartbeat(){
     this.status = true;
   }
 }

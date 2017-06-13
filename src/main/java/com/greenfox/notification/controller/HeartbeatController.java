@@ -6,15 +6,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HearthBeatController {
+public class HeartbeatController {
   private final ResponseValidator responseValidator;
 
   @Autowired
-  public HearthBeatController(ResponseValidator responseValidator) {
+  public HeartbeatController(ResponseValidator responseValidator) {
     this.responseValidator = responseValidator;
   }
 
-  @GetMapping("/hearthbeat")
+  @GetMapping("/heartbeat")
   public Object getHeartbeats() {
     return responseValidator.checkForResponse();
   }
