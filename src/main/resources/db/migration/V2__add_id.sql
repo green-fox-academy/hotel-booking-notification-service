@@ -1,5 +1,5 @@
 ALTER TABLE heartbeat
-  DROP CONSTRAINT hearbeat_pkey,
+  DROP CONSTRAINT heartbeat_pkey,
   ADD COLUMN id INT DEFAULT 0,
   ALTER COLUMN id SET NOT NULL,
   ADD CONSTRAINT MyPrimaryKey PRIMARY KEY (id);
