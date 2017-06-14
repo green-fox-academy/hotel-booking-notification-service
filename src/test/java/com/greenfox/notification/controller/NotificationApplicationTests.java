@@ -1,23 +1,18 @@
-package com.greenfox.notification;
+package com.greenfox.notification.controller;
 
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import com.greenfox.notification.model.DatabaseResponse;
+import com.greenfox.notification.NotificationApplication;
 import com.greenfox.notification.model.Heartbeat;
 import com.greenfox.notification.repository.HeartbeatRepository;
-import com.greenfox.notification.service.ResponseValidator;
 import java.nio.charset.Charset;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -41,16 +36,11 @@ public class NotificationApplicationTests {
   private WebApplicationContext webApplicationContext;
 
   @Autowired
-  private HeartbeatRepository heartbeatRepositoryMock;
-
-  @Autowired
   private HeartbeatRepository heartbeatRepository;
 
   @Before
   public void setup() throws Exception {
-    heartbeatRepositoryMock = Mockito.mock(HeartbeatRepository.class);
-    Mockito.reset(heartbeatRepositoryMock);
-    this.mockMvc = webAppContextSetup(webApplicationContext).build();
+    mockMvc = webAppContextSetup(webApplicationContext).build();
   }
 
   @Test
@@ -71,24 +61,5 @@ public class NotificationApplicationTests {
             .andExpect(jsonPath("$.status").value("ok"))
             .andExpect(jsonPath("$.database").value("ok"));
     heartbeatRepository.deleteAll();
-  }
-
-  @Test
-  public void testResponseLogicWithEmptyRepo() throws Exception {
-    when(heartbeatRepositoryMock.count()).thenReturn(0L);
-    ResponseValidator responseValidator = new ResponseValidator(heartbeatRepositoryMock);
-    DatabaseResponse object = (DatabaseResponse) responseValidator.checkForResponse();
-    assertEquals("ok", object.getStatus());
-    assertEquals("error", object.getDatabase());
-  }
-
-  @Test
-  public void testResponseLogicWithNotEmptyRepo() throws Exception {
-    heartbeatRepositoryMock.save(new Heartbeat());
-    when(heartbeatRepositoryMock.count()).thenReturn(1L);
-    ResponseValidator responseValidator = new ResponseValidator(heartbeatRepositoryMock);
-    DatabaseResponse object = (DatabaseResponse) responseValidator.checkForResponse();
-    assertEquals("ok", object.getStatus());
-    assertEquals("ok", object.getDatabase());
   }
 }

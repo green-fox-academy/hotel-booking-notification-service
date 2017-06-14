@@ -1,1 +1,0 @@
-create table heartbeat (status bit not null, primary key (status))
