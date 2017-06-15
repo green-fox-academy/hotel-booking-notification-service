@@ -48,9 +48,10 @@ public class ServiceTest {
 
   @Test
   public void testLogWithCurrentTime() throws Exception {
-    Instant newNow = Instant.now();
+    LocalDateTime newNow = LocalDateTime.now();
     when(timeStampUtilMock.getISO8601CurrentDate()).
         thenReturn(String.valueOf(newNow));
-    assertEquals(String.valueOf(newNow),timeStampUtilMock.getISO8601CurrentDate());
+    Log log = new Log("blabla", timeStampUtilMock.getISO8601CurrentDate());
+    assertEquals(newNow.withNano(0)+"Z",log.getDateTime());
   }
 }
