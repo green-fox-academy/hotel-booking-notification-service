@@ -83,7 +83,7 @@ public class ServiceTest {
     Log log = new Log("some-service.herokuapp.com");
     log.info("test message");
     log.showLog();
-    assertEquals(System.getenv("LOG_LEVEL") + " " + log.getDateTime() + " " + log.getHostname() + " " +
+    assertEquals(log.getLogLevel() + " " + log.getDateTime() + " " + log.getHostname() + " " +
             log.getMessage(), outContent.toString().trim());
   }
 
@@ -92,7 +92,7 @@ public class ServiceTest {
     Log log = new Log("some-service.herokuapp.com");
     log.error("test message with error");
     log.showLog();
-    assertEquals(System.getenv("LOG_LEVEL") + " " + log.getDateTime() + " " + log.getHostname() + " " +
+    assertEquals(log.getLogLevel() + " " + log.getDateTime() + " " + log.getHostname() + " " +
             log.getMessage(), errContent.toString().trim());
   }
 }
