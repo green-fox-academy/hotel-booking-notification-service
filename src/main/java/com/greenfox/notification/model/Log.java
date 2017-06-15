@@ -9,12 +9,12 @@ public class Log {
   private String hostname;
   private String logLevel;
   private String message;
+  private String dateTime;
   private static final String ENV = System.getenv("LOG_LEVEL");
 
   public Log(String hostname) {
     this.hostname = hostname;
-    this.logLevel = logLevel;
-    this.message = message;
+    this.dateTime  = TimeStampUtil.getISO8601StringForCurrentDate();
   }
 
   public void showLog() {
@@ -25,28 +25,28 @@ public class Log {
     }
   }
 
-  public void setLogLevelDebug(String message) {
+  public void debug(String message) {
     setLogLevel("DEBUG");
     setMessage(message);
   }
 
-  public void setLogLevelInfo(String message) {
+  public void info(String message) {
     setLogLevel(ENV);
     setMessage(message);
   }
 
-  public void setLogLevelWarn(String message) {
+  public void warn(String message) {
     setLogLevel("WARN");
     setMessage(message);
   }
 
-  public void setLogLevelError(String message) {
+  public void error(String message) {
     setLogLevel("ERROR");
     setMessage(message);
   }
 
   @Override
   public String toString() {
-    return logLevel + " " + hostname + " " + message;
+    return logLevel + " " + dateTime + " " + hostname + " " + message;
   }
 }

@@ -20,7 +20,7 @@ public class HeartbeatController {
   @GetMapping("/heartbeat")
   public Object getHeartbeats(HttpServletRequest request) {
     Log log = new Log(request.getRequestURI());
-    log.setLogLevelInfo("Endpoint was successfully called.");
+    log.info("Endpoint was successfully called.");
     log.showLog();
     return responseValidator.checkForResponse();
   }
