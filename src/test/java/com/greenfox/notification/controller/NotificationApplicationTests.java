@@ -63,6 +63,4 @@ public class NotificationApplicationTests {
             .andExpect(jsonPath("$.database").value("ok"));
     heartbeatRepository.deleteAll();
   }
-
-
 }

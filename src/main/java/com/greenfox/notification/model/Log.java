@@ -12,10 +12,13 @@ public class Log {
   private String dateTime;
   private static final String ENV = System.getenv("LOG_LEVEL");
 
-
   public Log(String hostname) {
     this.hostname = hostname;
-    this.dateTime  = new TimeStampUtil().getISO8601StringForCurrentDate();
+    this.dateTime  = new TimeStampUtil().getISO8601CurrentDate();
+  }
+
+  public Log(String hostname, String dateTime) {
+    this.dateTime = new TimeStampUtil().getISO8601CurrentDate();
   }
 
   public void showLog() {
