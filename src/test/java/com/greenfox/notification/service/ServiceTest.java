@@ -1,6 +1,7 @@
 package com.greenfox.notification.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.greenfox.notification.model.DatabaseResponse;
@@ -52,6 +53,6 @@ public class ServiceTest {
     when(timeStampUtilMock.getISO8601CurrentDate()).
         thenReturn(String.valueOf(newNow));
     Log log = new Log("blabla", timeStampUtilMock.getISO8601CurrentDate());
-    assertEquals(newNow.withNano(0)+"Z",log.getDateTime());
+    assertTrue(log.getDateTime().contains(newNow.withNano(0)+"Z"));
   }
 }
