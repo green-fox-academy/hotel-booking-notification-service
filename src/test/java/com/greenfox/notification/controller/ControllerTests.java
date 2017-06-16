@@ -27,7 +27,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @SpringBootTest(classes = NotificationApplication.class)
 @WebAppConfiguration
 @EnableWebMvc
-public class NotificationApplicationTests {
+public class ControllerTests {
   private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
           MediaType.APPLICATION_JSON.getSubtype(),
           Charset.forName("utf8"));

@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ResponseValidator {
+public class ResponseService {
   private final HeartbeatRepository heartbeatRepository;
 
   @Autowired
-  public ResponseValidator(HeartbeatRepository heartbeatRepository) {
+  public ResponseService(HeartbeatRepository heartbeatRepository) {
     this.heartbeatRepository = heartbeatRepository;
   }
 

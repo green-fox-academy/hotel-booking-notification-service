@@ -1,5 +1,6 @@
 package com.greenfox.notification.model;
 
+import com.greenfox.notification.service.TimeStampService;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,11 +15,11 @@ public class Log {
 
   public Log(String hostname) {
     this.hostname = hostname;
-    this.dateTime  = new TimeStampUtil().getISO8601CurrentDate();
+    this.dateTime  = new TimeStampService().getISO8601CurrentDate();
   }
 
   public Log(String hostname, String dateTime) {
-    this.dateTime = new TimeStampUtil().getISO8601CurrentDate();
+    this.dateTime = new TimeStampService().getISO8601CurrentDate();
   }
 
   public void showLog() {

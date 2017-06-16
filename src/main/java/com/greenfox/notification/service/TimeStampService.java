@@ -1,11 +1,14 @@
-package com.greenfox.notification.model;
+package com.greenfox.notification.service;
+
+import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class TimeStampUtil {
+@Service
+public class TimeStampService {
 
   public String getISO8601CurrentDate() {
     Date now = new Date();
