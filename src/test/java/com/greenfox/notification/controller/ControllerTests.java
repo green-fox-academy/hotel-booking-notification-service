@@ -10,6 +10,9 @@ import com.greenfox.notification.NotificationApplication;
 import com.greenfox.notification.model.Heartbeat;
 import com.greenfox.notification.repository.HeartbeatRepository;
 import java.nio.charset.Charset;
+
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +45,9 @@ public class ControllerTests {
   @Before
   public void setup() throws Exception {
     mockMvc = webAppContextSetup(webApplicationContext).build();
+    ConnectionFactory factory = new ConnectionFactory();
+    factory.setUri(System.getenv("RABBIT_BIGWIG_TX_URL"));
+    Connection connection = factory.newConnection();
   }
 
   @Test

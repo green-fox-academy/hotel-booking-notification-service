@@ -22,6 +22,8 @@ public class ResponseService {
       return new DatabaseResponse("ok", "error", "ok");
     } else if (heartbeatRepository.count() > 0 && (rabbitMQ.getQueueMessageSize() > 0 || !rabbitMQ.getConnection().isOpen())) {
       return new DatabaseResponse("ok", "ok", "error");
+    } else if (heartbeatRepository.count() > 0 && (rabbitMQ.getQueueMessageSize() == 0 && rabbitMQ.getConnection().isOpen())) {
+      return new DatabaseResponse("ok", "ok", "ok");
     } else {
       return new OkResponse();
     }

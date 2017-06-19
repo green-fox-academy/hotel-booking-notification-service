@@ -11,20 +11,18 @@ import java.io.IOException;
 @Getter
 @Setter
 public class RabbitMQ {
-  private final static String QUEUE_NAME = "heartbeat";
+  private final String QUEUE_NAME = "heartbeat";
   private int queueMessageSize;
   private Connection connection;
 
   public void receiveMessage() throws Exception {
     ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost("hotel-booking-notification-service.herokuapp.com");
-    Connection connection = factory.newConnection();
-    this.connection = connection;
+    factory.setUri(System.getenv("RABBIT_BIGWIG_RX_URL"));
+    connection = factory.newConnection();
     Channel channel = connection.createChannel();
-    queueMessageSize = channel.queueDeclarePassive(QUEUE_NAME).getMessageCount();
     channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+    queueMessageSize = channel.queueDeclarePassive(QUEUE_NAME).getMessageCount();
     System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-
     Consumer consumer = new DefaultConsumer(channel) {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
@@ -38,15 +36,14 @@ public class RabbitMQ {
 
   public void sendMessage() throws Exception {
     ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost("hotel-booking-notification-service.herokuapp.com");
-    Connection connection = factory.newConnection();
+    factory.setUri(System.getenv("RABBIT_BIGWIG_TX_URL"));
+    connection = factory.newConnection();
     Channel channel = connection.createChannel();
-
     channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+    queueMessageSize = channel.queueDeclarePassive(QUEUE_NAME).getMessageCount();
     String message = "Hello World!";
     channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"));
     System.out.println(" [x] Sent '" + message + "'");
-
     channel.close();
     connection.close();
   }

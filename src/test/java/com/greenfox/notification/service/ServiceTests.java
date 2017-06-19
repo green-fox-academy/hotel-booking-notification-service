@@ -23,7 +23,7 @@ public class ServiceTests {
   private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
   private RabbitMQ rabbitMQMock;
-  private static String HOSTNAME = "hotel-booking-notification-service.herokuapp.com";
+  private final String HOSTNAME = "hotel-booking-notification-service.herokuapp.com";
 
   @Before
   public void setup() throws Exception {
