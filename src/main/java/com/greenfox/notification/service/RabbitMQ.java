@@ -17,7 +17,7 @@ public class RabbitMQ {
 
   public void receiveMessage() throws Exception {
     ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost("hotel-booking-notification-service.herokuapp.com");
+    factory.setUri("hotel-booking-notification-service.herokuapp.com");
     Connection connection = factory.newConnection();
     this.connection = connection;
     Channel channel = connection.createChannel();
@@ -38,7 +38,7 @@ public class RabbitMQ {
 
   public void sendMessage() throws Exception {
     ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost("hotel-booking-notification-service.herokuapp.com");
+    factory.setUri("hotel-booking-notification-service.herokuapp.com");
     Connection connection = factory.newConnection();
     Channel channel = connection.createChannel();
 
