@@ -17,7 +17,7 @@ public class RabbitMQ {
 
   public void receiveMessage() throws Exception {
     ConnectionFactory factory = new ConnectionFactory();
-    factory.setUri(System.getenv("RABBIT_BIGWIG_RX_URL"));
+    factory.setUri(System.getenv("RABBITMQ_BIGWIG_RX_URL"));
     connection = factory.newConnection();
     Channel channel = connection.createChannel();
     channel.queueDeclare(QUEUE_NAME, false, false, false, null);
@@ -36,7 +36,7 @@ public class RabbitMQ {
 
   public void sendMessage() throws Exception {
     ConnectionFactory factory = new ConnectionFactory();
-    factory.setUri(System.getenv("RABBIT_BIGWIG_TX_URL"));
+    factory.setUri(System.getenv("RABBITMQ_BIGWIG_TX_URL"));
     connection = factory.newConnection();
     Channel channel = connection.createChannel();
     channel.queueDeclare(QUEUE_NAME, false, false, false, null);

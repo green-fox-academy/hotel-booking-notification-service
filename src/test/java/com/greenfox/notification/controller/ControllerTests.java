@@ -46,7 +46,7 @@ public class ControllerTests {
   public void setup() throws Exception {
     mockMvc = webAppContextSetup(webApplicationContext).build();
     ConnectionFactory factory = new ConnectionFactory();
-    factory.setUri(System.getenv("RABBIT_BIGWIG_TX_URL"));
+    factory.setUri(System.getenv("RABBITMQ_BIGWIG_TX_URL"));
     Connection connection = factory.newConnection();
   }
 
