@@ -20,8 +20,10 @@ import org.mockito.Mockito;
 public class ServiceTests {
   private HeartbeatRepository heartbeatRepositoryMock;
   private TimeStampService timeStampServiceMock;
+  private TimeStampService timeStampService = new TimeStampService();
   private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+  private static String HOSTNAME = "hotel-booking-notification-service.herokuapp.com";
 
   @Before
   public void setup() throws Exception {
@@ -64,33 +66,24 @@ public class ServiceTests {
   public void testLogWithCurrentTime() throws Exception {
     LocalDateTime newNow = LocalDateTime.now();
     when(timeStampServiceMock.getISO8601CurrentDate()).
-            thenReturn(String.valueOf(newNow));
-    Log log = new Log("some-service.herokuapp.com", timeStampServiceMock.getISO8601CurrentDate());
-    assertEquals((newNow.withNano(0) + "Z").length(), log.getDateTime().length());
-  }
-
-  @Test
-  public void testForLogForSetMessage() throws Exception {
-    Log log = new Log("some-service.herokuapp.com");
-    log.info("test message");
-    assertEquals("test message", log.getMessage());
+            thenReturn(String.valueOf(LocalDateTime.now().withNano(0)) + "Z");
+    Log log = new Log("/heartbeat", timeStampServiceMock.getISO8601CurrentDate());
+    assertEquals((newNow.withNano(0) + "Z"), log.getDateTime());
   }
 
   @Test
   public void testLogWithPrintOut() throws Exception {
-    Log log = new Log("some-service.herokuapp.com");
+    Log log = new Log("INFO", timeStampService.getISO8601CurrentDate(), HOSTNAME, "/test");
     log.info("test message");
-    log.showLog();
-    assertEquals(log.getLogLevel() + " " + log.getDateTime() + " " + log.getHostname() + " " +
-            log.getMessage(), outContent.toString().trim());
+    assertEquals(log.getLogLevel() + " " + log.getDateTime() + " " + HOSTNAME + " " +
+            "test message " + "HTTP-REQUEST " + log.getEndPoint(), outContent.toString().trim());
   }
 
   @Test
   public void testLogWithErrorPrintOut() throws Exception {
-    Log log = new Log("some-service.herokuapp.com");
+    Log log = new Log("ERROR", timeStampService.getISO8601CurrentDate(), HOSTNAME, "/errortest");
     log.error("test message with error");
-    log.showLog();
-    assertEquals(log.getLogLevel() + " " + log.getDateTime() + " " + log.getHostname() + " " +
-            log.getMessage(), errContent.toString().trim());
+    assertEquals(log.getLogLevel() + " " + log.getDateTime() + " " + HOSTNAME + " " +
+            "test message with error " + "HTTP-ERROR " + log.getEndPoint(), errContent.toString().trim());
   }
 }

@@ -1,57 +1,61 @@
 package com.greenfox.notification.model;
 
-import com.greenfox.notification.service.TimeStampService;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @Setter
 public class Log {
-  private String hostname;
+  private static String HOSTNAME = "hotel-booking-notification-service.herokuapp.com";
   private String logLevel;
   private String message;
   private String dateTime;
+  private String endPoint;
   private static final String ENV = System.getenv("LOG_LEVEL");
+  private static final List<String> levels = Arrays.asList("DEBUG", "INFO", "WARN", "ERROR");
 
-  public Log(String hostname) {
-    this.hostname = hostname;
-    this.dateTime  = new TimeStampService().getISO8601CurrentDate();
+  public Log(String hostName) {
+    this.message = message;
+    this.logLevel = logLevel;
+    this.endPoint = endPoint;
+    this.dateTime  = dateTime;
   }
 
-  public Log(String hostname, String dateTime) {
-    this.dateTime = new TimeStampService().getISO8601CurrentDate();
+  public Log(String logLevel, String dateTime, String hostName, String endPoint) {
+    this.logLevel = logLevel;
+    this.dateTime = dateTime;
+    this.endPoint = endPoint;
   }
 
-  public void showLog() {
-    if (logLevel.equals("ERROR") || logLevel.equals("WARN")) {
-      System.err.println(this);
-    } else if (!(ENV.equals("ERROR") && ENV.equals("WARN"))) {
-      System.out.println(this);
+  public Log(String endPoint, String dateTime) {
+    this.dateTime = dateTime;
+    this.endPoint = endPoint;
+  }
+
+  private void printLog(String logLevel, String message) {
+    if (levels.indexOf(logLevel) > 1) {
+      System.err.println(logLevel + " " + dateTime + " " + HOSTNAME + " " + message + " " + "HTTP-ERROR " + endPoint);
+    } else {
+      System.out.println(logLevel + " " + dateTime + " " + HOSTNAME + " " + message + " " + "HTTP-REQUEST " + endPoint);
     }
   }
 
   public void debug(String message) {
-    setLogLevel("DEBUG");
-    setMessage(message);
+    printLog("DEBUG", message);
   }
 
   public void info(String message) {
-    setLogLevel(ENV);
-    setMessage(message);
+    printLog("INFO", message);
   }
 
   public void warn(String message) {
-    setLogLevel("WARN");
-    setMessage(message);
+    printLog("WARN", message);
   }
 
   public void error(String message) {
-    setLogLevel("ERROR");
-    setMessage(message);
-  }
-
-  @Override
-  public String toString() {
-    return logLevel + " " + dateTime + " " + hostname + " " + message;
+    printLog("ERROR", message);
   }
 }
