@@ -50,7 +50,8 @@ public class ControllerTests {
             .andExpect(status().isOk())
             .andExpect(content().contentType(contentType))
             .andExpect(jsonPath("$.status").value("ok"))
-            .andExpect(jsonPath("$.database").value("error"));
+            .andExpect(jsonPath("$.database").value("error"))
+            .andExpect(jsonPath("$.queue").value("ok"));
   }
 
   @Test
@@ -60,7 +61,8 @@ public class ControllerTests {
             .andExpect(status().isOk())
             .andExpect(content().contentType(contentType))
             .andExpect(jsonPath("$.status").value("ok"))
-            .andExpect(jsonPath("$.database").value("ok"));
+            .andExpect(jsonPath("$.database").value("ok"))
+            .andExpect(jsonPath("$.queue").value("error"));
     heartbeatRepository.deleteAll();
   }
 }

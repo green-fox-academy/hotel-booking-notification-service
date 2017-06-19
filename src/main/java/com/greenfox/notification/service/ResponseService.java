@@ -9,17 +9,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResponseService {
   private final HeartbeatRepository heartbeatRepository;
+  private RabbitMQ rabbitMQ;
 
   @Autowired
-  public ResponseService(HeartbeatRepository heartbeatRepository) {
+  public ResponseService(HeartbeatRepository heartbeatRepository, RabbitMQ rabbitMQ) {
     this.heartbeatRepository = heartbeatRepository;
+    this.rabbitMQ = rabbitMQ;
   }
 
   public Object checkForResponse() {
-    if (heartbeatRepository.count() == 0) {
-      return new DatabaseResponse("ok", "error");
-    } else if (heartbeatRepository.count() > 0) {
-      return new DatabaseResponse("ok", "ok");
+    if (heartbeatRepository.count() == 0 && rabbitMQ.getQueueMessageSize() == 0) {
+      return new DatabaseResponse("ok", "error", "ok");
+    } else if (heartbeatRepository.count() > 0 && (rabbitMQ.getQueueMessageSize() > 0 || !rabbitMQ.getConnection().isOpen())) {
+      return new DatabaseResponse("ok", "ok", "error");
     } else {
       return new OkResponse();
     }

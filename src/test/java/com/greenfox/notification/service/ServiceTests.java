@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import com.greenfox.notification.model.DatabaseResponse;
-import com.greenfox.notification.model.Heartbeat;
 import com.greenfox.notification.model.Log;
 import com.greenfox.notification.repository.HeartbeatRepository;
 
@@ -23,12 +22,14 @@ public class ServiceTests {
   private TimeStampService timeStampService = new TimeStampService();
   private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+  private RabbitMQ rabbitMQMock;
   private static String HOSTNAME = "hotel-booking-notification-service.herokuapp.com";
 
   @Before
   public void setup() throws Exception {
     heartbeatRepositoryMock = Mockito.mock(HeartbeatRepository.class);
     timeStampServiceMock = Mockito.mock(TimeStampService.class);
+    rabbitMQMock = Mockito.mock(RabbitMQ.class);
   }
 
   @Before
@@ -44,22 +45,25 @@ public class ServiceTests {
   }
 
   @Test
-  public void testResponseLogicWithEmptyRepo() throws Exception {
+  public void testResponseLogicForOk() throws Exception {
     when(heartbeatRepositoryMock.count()).thenReturn(0L);
-    ResponseService responseService = new ResponseService(heartbeatRepositoryMock);
+    when(rabbitMQMock.getQueueMessageSize()).thenReturn(0);
+    ResponseService responseService = new ResponseService(heartbeatRepositoryMock, rabbitMQMock);
     DatabaseResponse object = (DatabaseResponse) responseService.checkForResponse();
     assertEquals("ok", object.getStatus());
     assertEquals("error", object.getDatabase());
+    assertEquals("ok", object.getQueue());
   }
 
   @Test
-  public void testResponseLogicWithNotEmptyRepo() throws Exception {
-    heartbeatRepositoryMock.save(new Heartbeat());
+  public void testResponseLogicForError() throws Exception {
     when(heartbeatRepositoryMock.count()).thenReturn(1L);
-    ResponseService responseService = new ResponseService(heartbeatRepositoryMock);
+    when(rabbitMQMock.getQueueMessageSize()).thenReturn(1);
+    ResponseService responseService = new ResponseService(heartbeatRepositoryMock, rabbitMQMock);
     DatabaseResponse object = (DatabaseResponse) responseService.checkForResponse();
     assertEquals("ok", object.getStatus());
     assertEquals("ok", object.getDatabase());
+    assertEquals("error", object.getQueue());
   }
 
   @Test

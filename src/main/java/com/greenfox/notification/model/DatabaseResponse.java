@@ -8,10 +8,12 @@ import lombok.Setter;
 public class DatabaseResponse {
   private String status;
   private String database;
+  private String queue;
 
-  public DatabaseResponse(String status, String database) {
+  public DatabaseResponse(String status, String database, String queue) {
     this.status = status;
     this.database = database;
+    this.queue = queue;
   }
 }
 
