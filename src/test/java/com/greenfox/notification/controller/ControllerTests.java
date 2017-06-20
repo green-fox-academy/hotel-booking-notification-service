@@ -52,6 +52,7 @@ public class ControllerTests {
 
   @Test
   public void testGetWithEmptyTable() throws Exception {
+    heartbeatRepository.deleteAll();
     mockMvc.perform(get("/heartbeat"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(contentType))
@@ -68,7 +69,7 @@ public class ControllerTests {
             .andExpect(content().contentType(contentType))
             .andExpect(jsonPath("$.status").value("ok"))
             .andExpect(jsonPath("$.database").value("ok"))
-            .andExpect(jsonPath("$.queue").value("error"));
+            .andExpect(jsonPath("$.queue").value("ok"));
     heartbeatRepository.deleteAll();
   }
 }

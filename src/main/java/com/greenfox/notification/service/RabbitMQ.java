@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 public class RabbitMQ {
-  private int queueMessageSize;
   private Connection connection;
   private ConnectionFactory connectionFactory;
   private Channel channel;
@@ -52,7 +51,10 @@ public class RabbitMQ {
     channel = connection.createChannel();
     Event event = new Event(message);
     channel.basicPublish("", queue, null, Event.asJsonString(event).getBytes());
-    queueMessageSize = channel.queueDeclarePassive(queue).getMessageCount();
     System.out.println(" [x] Sent '" + Event.asJsonString(event) + "'");
+  }
+
+  public boolean isQueueEmpty(String queue) throws IOException {
+    return channel.queueDeclarePassive(queue).getMessageCount() == 0;
   }
 }
