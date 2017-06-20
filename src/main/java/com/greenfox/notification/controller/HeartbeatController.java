@@ -4,11 +4,10 @@ import com.greenfox.notification.model.Log;
 import com.greenfox.notification.service.RabbitMQ;
 import com.greenfox.notification.service.ResponseService;
 import com.greenfox.notification.service.TimeStampService;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class HeartbeatController {
@@ -27,8 +26,8 @@ public class HeartbeatController {
   public Object getHeartbeats(HttpServletRequest request) throws Exception {
     Log log = new Log(request.getRequestURI(), timeStampService.getISO8601CurrentDate());
     log.info("Endpoint was successfully called.");
-    rabbitMQ.sendMessage();
-    rabbitMQ.receiveMessage();
+    rabbitMQ.push("heartbeat", "wohooo");
+    rabbitMQ.consume("heartbeat");
     return responseService.checkForResponse();
   }
 }

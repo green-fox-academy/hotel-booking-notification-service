@@ -1,29 +1,43 @@
 package com.greenfox.notification.service;
 
-import com.rabbitmq.client.*;
+import com.greenfox.notification.model.Event;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Consumer;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.TimeoutException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 @Service
 @Getter
 @Setter
 public class RabbitMQ {
-  private final String QUEUE_NAME = "heartbeat";
   private int queueMessageSize;
   private Connection connection;
+  private ConnectionFactory connectionFactory;
+  private Channel channel;
+  private Consumer consumer;
 
-  public void receiveMessage() throws Exception {
-    ConnectionFactory factory = new ConnectionFactory();
-    factory.setUri(System.getenv("RABBITMQ_BIGWIG_RX_URL"));
-    connection = factory.newConnection();
-    Channel channel = connection.createChannel();
-    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-    queueMessageSize = channel.queueDeclarePassive(QUEUE_NAME).getMessageCount();
-    System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-    Consumer consumer = new DefaultConsumer(channel) {
+  public RabbitMQ()
+      throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, TimeoutException {
+    this.connectionFactory = new ConnectionFactory();
+    this.connectionFactory.setUri(System.getenv("RABBITMQ_BIGWIG_RX_URL"));
+    this.connection = connectionFactory.newConnection();
+  }
+
+  public void consume(String queue) throws Exception {
+    channel = connection.createChannel();
+    channel.queueDeclare(queue, false, false, false, null);
+    consumer = new DefaultConsumer(channel) {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
               throws IOException {
@@ -31,20 +45,14 @@ public class RabbitMQ {
         System.out.println(" [x] Received '" + message + "'");
       }
     };
-    channel.basicConsume(QUEUE_NAME, true, consumer);
+    channel.basicConsume(queue, true, consumer);
   }
 
-  public void sendMessage() throws Exception {
-    ConnectionFactory factory = new ConnectionFactory();
-    factory.setUri(System.getenv("RABBITMQ_BIGWIG_TX_URL"));
-    connection = factory.newConnection();
-    Channel channel = connection.createChannel();
-    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-    queueMessageSize = channel.queueDeclarePassive(QUEUE_NAME).getMessageCount();
-    String message = "Hello World!";
-    channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"));
-    System.out.println(" [x] Sent '" + message + "'");
-    channel.close();
-    connection.close();
+  public void push(String queue, String message) throws Exception {
+    channel = connection.createChannel();
+    Event event = new Event(message);
+    channel.basicPublish("", queue, null, Event.asJsonString(event).getBytes());
+    queueMessageSize = channel.queueDeclarePassive(queue).getMessageCount();
+    System.out.println(" [x] Sent '" + Event.asJsonString(event) + "'");
   }
 }
