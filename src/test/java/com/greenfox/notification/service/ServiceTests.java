@@ -11,6 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
 
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,12 +26,16 @@ public class ServiceTests {
   private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
   private RabbitMQ rabbitMQMock;
   private final String HOSTNAME = "hotel-booking-notification-service.herokuapp.com";
+  private String queueName = "heartbeat";
 
   @Before
   public void setup() throws Exception {
     heartbeatRepositoryMock = Mockito.mock(HeartbeatRepository.class);
     timeStampServiceMock = Mockito.mock(TimeStampService.class);
     rabbitMQMock = Mockito.mock(RabbitMQ.class);
+    ConnectionFactory factory = new ConnectionFactory();
+    factory.setUri(System.getenv("RABBITMQ_BIGWIG_TX_URL"));
+    Connection connection = factory.newConnection();
   }
 
   @Before
@@ -47,7 +53,7 @@ public class ServiceTests {
   @Test
   public void testResponseLogicForOk() throws Exception {
     when(heartbeatRepositoryMock.count()).thenReturn(0L);
-    when(rabbitMQMock.getQueueMessageSize()).thenReturn(0);
+    when(rabbitMQMock.isQueueEmpty(queueName)).thenReturn(true);
     ResponseService responseService = new ResponseService(heartbeatRepositoryMock, rabbitMQMock);
     DatabaseResponse object = (DatabaseResponse) responseService.checkForResponse();
     assertEquals("ok", object.getStatus());
@@ -58,7 +64,7 @@ public class ServiceTests {
   @Test
   public void testResponseLogicForError() throws Exception {
     when(heartbeatRepositoryMock.count()).thenReturn(1L);
-    when(rabbitMQMock.getQueueMessageSize()).thenReturn(1);
+    when(rabbitMQMock.isQueueEmpty(queueName)).thenReturn(false);
     ResponseService responseService = new ResponseService(heartbeatRepositoryMock, rabbitMQMock);
     DatabaseResponse object = (DatabaseResponse) responseService.checkForResponse();
     assertEquals("ok", object.getStatus());
