@@ -48,10 +48,12 @@ public class ControllerTests {
     ConnectionFactory factory = new ConnectionFactory();
     factory.setUri(System.getenv("RABBITMQ_BIGWIG_TX_URL"));
     Connection connection = factory.newConnection();
+    connection.close(-1);
   }
 
   @Test
   public void testGetWithEmptyTable() throws Exception {
+    heartbeatRepository.deleteAll();
     mockMvc.perform(get("/heartbeat"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(contentType))
@@ -68,7 +70,7 @@ public class ControllerTests {
             .andExpect(content().contentType(contentType))
             .andExpect(jsonPath("$.status").value("ok"))
             .andExpect(jsonPath("$.database").value("ok"))
-            .andExpect(jsonPath("$.queue").value("error"));
+            .andExpect(jsonPath("$.queue").value("ok"));
     heartbeatRepository.deleteAll();
   }
 }
