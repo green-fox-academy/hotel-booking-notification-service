@@ -13,6 +13,8 @@ import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeoutException;
+
+import com.sendgrid.Mail;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,13 @@ public class RabbitMQ {
   public void push(String queue, String message) throws Exception {
     channel = connection.createChannel();
     Event event = new Event(message);
+    channel.basicPublish("", queue, null, Event.asJsonString(event).getBytes());
+    System.out.println(" [x] Sent '" + Event.asJsonString(event) + "'");
+  }
+
+  public void pushEmail(String queue, Mail mail) throws Exception {
+    channel = connection.createChannel();
+    Event event = new Event(mail);
     channel.basicPublish("", queue, null, Event.asJsonString(event).getBytes());
     System.out.println(" [x] Sent '" + Event.asJsonString(event) + "'");
   }

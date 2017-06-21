@@ -18,22 +18,26 @@ public class EmailSenderService {
   private Request request;
   private String subject;
   private SendGrid sg;
+  private final RabbitMQ rabbitMQ;
 
   @Autowired
-  public EmailSenderService(Log log) {
+  public EmailSenderService(Log log, RabbitMQ rabbitMQ) {
     this.log = log;
     this.request = new Request();
     this.subject = "Registration process";
     this.sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
+    this.rabbitMQ = rabbitMQ;
   }
 
-  public void sendConfirmationEmail(HttpServletRequest servletRequest, Data data) throws IOException {
+  public void sendConfirmationEmail(HttpServletRequest servletRequest, Data data) throws Exception {
     Email from = new Email("test@example.com");
     Email to = new Email(data.getAttributes().getEmail());
     com.sendgrid.Content content = new com.sendgrid.Content("text/plain", "vilmoskorte");
     Mail mail = new Mail(from, subject, to, content);
     mail.personalization.get(0).addSubstitution("-name-", data.getAttributes().getName());
     mail.setTemplateId(System.getenv("TEMPLATE_ID"));
+    rabbitMQ.pushEmail("email", mail);
+    rabbitMQ.consume("email");
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
     request.setBody(mail.build());

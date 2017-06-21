@@ -2,7 +2,6 @@ package com.greenfox.notification.controller;
 
 import com.greenfox.notification.model.Data;
 import com.greenfox.notification.service.EmailSenderService;
-import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +18,7 @@ public class ConfirmationController {
   }
 
   @PostMapping("/email/registration")
-  public Data registration(@RequestBody Data data, HttpServletRequest httpServletRequest) throws IOException {
+  public Data registration(@RequestBody Data data, HttpServletRequest httpServletRequest) throws Exception {
     emailSenderService.sendConfirmationEmail(httpServletRequest, data);
     return data;
   }
