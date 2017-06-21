@@ -18,15 +18,6 @@ public class Event {
     this.message = message;
   }
 
-  @Override
-  public String toString() {
-    return "Event{" +
-        "time=" + time +
-        ", hostname= " + hostname +
-        ", message= " + message +'\'' +
-    '}';
-  }
-
   public static String asJsonString(final Object obj) {
     try {
       ObjectMapper mapper = new ObjectMapper();
