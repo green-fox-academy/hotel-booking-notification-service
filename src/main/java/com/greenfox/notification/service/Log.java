@@ -15,35 +15,13 @@ public class Log {
   private String logLevel;
   private String message;
   private String dateTime;
-//  private String endPoint;
-//  private static final String LOG_ENV = System.getenv("LOG_LEVEL");
   private static final List<String> levels = Arrays.asList("DEBUG", "INFO", "WARN", "ERROR");
   private TimeStampService timeStampService = new TimeStampService();
-
-//  public Log(String hostName) {
-//    this.message = message;
-//    this.logLevel = logLevel;
-//    this.endPoint = endPoint;
-//    this.dateTime  = dateTime;
-//  }
-
-//  public Log(String logLevel, String dateTime, String hostName, String endPoint) {
-//    this.logLevel = logLevel;
-//    this.dateTime = dateTime;
-//    this.endPoint = endPoint;
-//  }
-//
-//  public Log(String dateTime) {
-//    this.dateTime = dateTime;
-//    this.logLevel = System.getenv("LOG_LEVEL");
-//    this.hostName = System.getenv("HOSTNAME");
-//  }
 
   public Log() {
     this.dateTime = timeStampService.getISO8601CurrentDate();
     this.logLevel = System.getenv("LOG_LEVEL");
     this.hostName = System.getenv("HOSTNAME");
-//    this.endPoint = endPoint;
   }
 
   private void printLog(String requestEndpoint, String logLevel, String message) {
