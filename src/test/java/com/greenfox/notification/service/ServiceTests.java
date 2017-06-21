@@ -19,7 +19,6 @@ import org.mockito.Mockito;
 public class ServiceTests {
   private HeartbeatRepository heartbeatRepositoryMock;
   private TimeStampService timeStampServiceMock;
-  private TimeStampService timeStampService = new TimeStampService();
   private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
   private RabbitMQ rabbitMQMock;
@@ -75,9 +74,10 @@ public class ServiceTests {
   @Test
   public void testLogWithCurrentTime() throws Exception {
     LocalDateTime newNow = LocalDateTime.now();
+    Log log = new Log();
     when(timeStampServiceMock.getISO8601CurrentDate()).
             thenReturn(String.valueOf(LocalDateTime.now().withNano(0)) + "Z");
-    Log log = new Log();
+    log.setDateTime(timeStampServiceMock.getISO8601CurrentDate());
     assertEquals((newNow.withNano(0) + "Z"), log.getDateTime());
   }
 
