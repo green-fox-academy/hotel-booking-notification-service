@@ -4,15 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import com.greenfox.notification.model.DatabaseResponse;
-import com.greenfox.notification.model.Log;
 import com.greenfox.notification.repository.HeartbeatRepository;
-
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
-
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import javax.servlet.http.HttpServletRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,14 +23,16 @@ public class ServiceTests {
   private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
   private RabbitMQ rabbitMQMock;
-  private final String HOSTNAME = "hotel-booking-notification-service.herokuapp.com";
-  private String queueName = "heartbeat";
+  private final String HOSTNAME = System.getenv("HOSTNAME");
+  private String queueName = System.getenv("QUEUE_NAME");
+  private HttpServletRequest requestMock;
 
   @Before
   public void setup() throws Exception {
     heartbeatRepositoryMock = Mockito.mock(HeartbeatRepository.class);
     timeStampServiceMock = Mockito.mock(TimeStampService.class);
     rabbitMQMock = Mockito.mock(RabbitMQ.class);
+    requestMock = Mockito.mock(HttpServletRequest.class);
     ConnectionFactory factory = new ConnectionFactory();
     factory.setUri(System.getenv("RABBITMQ_BIGWIG_TX_URL"));
     Connection connection = factory.newConnection();
@@ -77,23 +77,25 @@ public class ServiceTests {
     LocalDateTime newNow = LocalDateTime.now();
     when(timeStampServiceMock.getISO8601CurrentDate()).
             thenReturn(String.valueOf(LocalDateTime.now().withNano(0)) + "Z");
-    Log log = new Log("/heartbeat", timeStampServiceMock.getISO8601CurrentDate());
+    Log log = new Log();
     assertEquals((newNow.withNano(0) + "Z"), log.getDateTime());
   }
 
   @Test
   public void testLogWithPrintOut() throws Exception {
-    Log log = new Log("INFO", timeStampService.getISO8601CurrentDate(), HOSTNAME, "/test");
-    log.info("test message");
-    assertEquals(log.getLogLevel() + " " + log.getDateTime() + " " + HOSTNAME + " " +
-            "test message " + "HTTP-REQUEST " + log.getEndPoint(), outContent.toString().trim());
+    Log log = new Log();
+    when(requestMock.getRequestURI()).thenReturn("/test");
+    log.info(requestMock,"test message");
+    assertEquals( "INFO " + log.getDateTime() + " " + HOSTNAME + " " +
+            "test message " + "HTTP-REQUEST " + "/test", outContent.toString().trim());
   }
 
   @Test
   public void testLogWithErrorPrintOut() throws Exception {
-    Log log = new Log("ERROR", timeStampService.getISO8601CurrentDate(), HOSTNAME, "/errortest");
-    log.error("test message with error");
-    assertEquals(log.getLogLevel() + " " + log.getDateTime() + " " + HOSTNAME + " " +
-            "test message with error " + "HTTP-ERROR " + log.getEndPoint(), errContent.toString().trim());
+    Log log = new Log();
+    when(requestMock.getRequestURI()).thenReturn("/test");
+    log.error(requestMock,"test message with error");
+    assertEquals("ERROR " + log.getDateTime() + " " + HOSTNAME + " " +
+            "test message with error " + "HTTP-ERROR " + "/test", errContent.toString().trim());
   }
 }
