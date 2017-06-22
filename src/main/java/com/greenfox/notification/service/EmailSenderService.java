@@ -11,27 +11,21 @@ import javax.servlet.http.HttpServletRequest;
 public class EmailSenderService {
   private Log log;
   private Request request;
-  private String subject;
   private SendGrid sg;
   private final RabbitMQ rabbitMQ;
-  private Email sender;
+  private final EmailGenerator emailGenerator;
 
   @Autowired
-  public EmailSenderService(Log log, RabbitMQ rabbitMQ) {
+  public EmailSenderService(Log log, RabbitMQ rabbitMQ, EmailGenerator emailGenerator) {
     this.log = log;
     this.request = new Request();
-    this.subject = "Registration process";
     this.sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
     this.rabbitMQ = rabbitMQ;
-    this.sender = new Email("test@example.com");
+    this.emailGenerator = emailGenerator;
   }
 
   public void sendConfirmationEmail(HttpServletRequest servletRequest, Data data) throws Exception {
-    Email recipient = new Email(data.getAttributes().getEmail());
-    com.sendgrid.Content content = new com.sendgrid.Content("text/plain", "vilmoskorte");
-    Mail mail = new Mail(sender, subject, recipient, content);
-    mail.personalization.get(0).addSubstitution("-name-", data.getAttributes().getName());
-    mail.setTemplateId(System.getenv("TEMPLATE_ID"));
+    Mail mail = emailGenerator.generateEmail(data);
     rabbitMQ.push(servletRequest, "email", mail);
     rabbitMQ.consume(servletRequest, "email");
     request.setMethod(Method.POST);
