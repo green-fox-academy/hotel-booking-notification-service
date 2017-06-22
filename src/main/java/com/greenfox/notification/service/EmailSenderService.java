@@ -32,12 +32,12 @@ public class EmailSenderService {
     Mail mail = new Mail(sender, subject, recipient, content);
     mail.personalization.get(0).addSubstitution("-name-", data.getAttributes().getName());
     mail.setTemplateId(System.getenv("TEMPLATE_ID"));
-    rabbitMQ.push("email", mail);
-    rabbitMQ.consume("email");
+    rabbitMQ.push(servletRequest, "email", mail);
+    rabbitMQ.consume(servletRequest, "email");
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
     request.setBody(mail.build());
     Response response = sg.api(request);
-    log.info(servletRequest, (response.getStatusCode() + " " + response.getBody()+ " " + response.getHeaders()));
+    log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
   }
 }
