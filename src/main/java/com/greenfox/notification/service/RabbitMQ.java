@@ -53,7 +53,7 @@ public class RabbitMQ implements MessageQueue {
   }
 
   @Override
-  public void push(HttpServletRequest request, Object queue, Object message) throws IOException {
+  public void push(HttpServletRequest request, Object queue, Object message) {
     try {
       channel = connection.createChannel();
       Event event = new Event(message);
@@ -61,7 +61,11 @@ public class RabbitMQ implements MessageQueue {
       log.info(request, " [x] Sent '" + Event.asJsonString(event) + "'");
     } catch (IOException ex) {
       log.error(request, ex.getMessage());
-      channel.basicRecover(false);
+      try {
+        channel.basicRecover(false);
+      } catch (IOException e) {
+        log.error(request, e.getMessage());
+      }
     }
   }
 }

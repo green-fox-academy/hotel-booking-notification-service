@@ -12,7 +12,7 @@ import java.io.IOException;
 @Service
 public class ResponseService implements Response {
   private final HeartbeatRepository heartbeatRepository;
-  private RabbitMQ rabbitMQ;
+  private final RabbitMQ rabbitMQ;
   private String queueName = System.getenv("QUEUE_NAME");
 
   @Autowired

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class EmailSenderService {
-  private Log log;
+  private final Log log;
   private Request request;
   private SendGrid sg;
   private final RabbitMQ rabbitMQ;
@@ -24,14 +24,25 @@ public class EmailSenderService {
     this.emailGenerator = emailGenerator;
   }
 
-  public void sendConfirmationEmail(HttpServletRequest servletRequest, Data data) throws Exception {
+  public Mail sendConfirmationEmail(HttpServletRequest servletRequest, Data data) throws Exception {
     Mail mail = emailGenerator.generateEmail(data);
-    rabbitMQ.push(servletRequest, "email", mail);
-    rabbitMQ.consume(servletRequest, "email");
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
     request.setBody(mail.build());
     Response response = sg.api(request);
     log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
+    return mail;
+  }
+
+  public void pushEmail(HttpServletRequest servletRequest, Mail mail) {
+    rabbitMQ.push(servletRequest, "email", mail);
+  }
+
+  public void consumeEmail(HttpServletRequest servletRequest) {
+    try {
+      rabbitMQ.consume(servletRequest, "email");
+    } catch (Exception e) {
+      log.error(servletRequest, e.getMessage());
+    }
   }
 }

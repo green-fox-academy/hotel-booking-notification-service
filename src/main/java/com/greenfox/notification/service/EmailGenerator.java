@@ -12,7 +12,7 @@ public class EmailGenerator {
 
   public EmailGenerator(){
     this.subject = "Registration process";
-    this.sender = new Email("test@example.com");
+    this.sender = new Email(System.getenv("EMAIL_ADDRESS"));
   }
 
   public Mail generateEmail(Data data){

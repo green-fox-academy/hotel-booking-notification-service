@@ -10,17 +10,18 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-public class ConfirmationController {
+public class RegistrationConfirmationController {
   private final EmailSenderService emailSenderService;
 
   @Autowired
-  public ConfirmationController(EmailSenderService emailSenderService) {
+  public RegistrationConfirmationController(EmailSenderService emailSenderService) {
     this.emailSenderService = emailSenderService;
   }
 
   @PostMapping("/email/registration")
   public Data registration(@RequestBody Data data, HttpServletRequest httpServletRequest) throws Exception {
-    emailSenderService.sendConfirmationEmail(httpServletRequest, data);
+    emailSenderService.pushEmail(httpServletRequest, emailSenderService.sendConfirmationEmail(httpServletRequest, data));
+    emailSenderService.consumeEmail(httpServletRequest);
     return data;
   }
 }
