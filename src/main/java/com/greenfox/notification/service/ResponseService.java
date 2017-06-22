@@ -2,6 +2,7 @@ package com.greenfox.notification.service;
 
 import com.greenfox.notification.model.classes.DatabaseResponse;
 import com.greenfox.notification.model.classes.OkResponse;
+import com.greenfox.notification.model.interfaces.Response;
 import com.greenfox.notification.repository.HeartbeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class ResponseService {
+public class ResponseService implements Response {
   private final HeartbeatRepository heartbeatRepository;
   private RabbitMQ rabbitMQ;
   private String queueName = System.getenv("QUEUE_NAME");
@@ -20,7 +21,7 @@ public class ResponseService {
     this.rabbitMQ = rabbitMQ;
   }
 
-  public Object checkForResponse() throws IOException {
+  public Response checkForResponse() throws IOException {
     if (heartbeatRepository.count() == 0 && rabbitMQ.isQueueEmpty(queueName)) {
       return new DatabaseResponse("ok", "error", "ok");
     } else if (heartbeatRepository.count() > 0 && (!rabbitMQ.isQueueEmpty(queueName) || !rabbitMQ.getConnection().isOpen())) {

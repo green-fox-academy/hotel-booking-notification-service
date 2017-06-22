@@ -1,5 +1,6 @@
 package com.greenfox.notification.controller;
 
+import com.greenfox.notification.model.interfaces.Response;
 import com.greenfox.notification.service.Log;
 import com.greenfox.notification.service.RabbitMQ;
 import com.greenfox.notification.service.ResponseService;
@@ -22,7 +23,7 @@ public class HeartbeatController {
   }
 
   @GetMapping("/heartbeat")
-  public Object getHeartbeats(HttpServletRequest request) throws Exception {
+  public Response getHeartbeats(HttpServletRequest request) throws Exception {
     log.info(request,"Endpoint was successfully called.");
     rabbitMQ.push("heartbeat", "wohooo");
     rabbitMQ.consume("heartbeat");
