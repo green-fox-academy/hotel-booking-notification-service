@@ -1,39 +1,40 @@
 package com.greenfox.notification.service;
 
-import com.greenfox.notification.model.Event;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.greenfox.notification.model.classes.Event;
+import com.greenfox.notification.model.interfaces.MessageQueue;
+import com.rabbitmq.client.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeoutException;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.stereotype.Service;
 
 @Service
 @Getter
 @Setter
-public class RabbitMQ {
+public class RabbitMQ implements MessageQueue {
   private Connection connection;
   private ConnectionFactory connectionFactory;
   private Channel channel;
   private Consumer consumer;
+  private final Log log;
 
-  public RabbitMQ()
-      throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, TimeoutException {
+  @Autowired
+  public RabbitMQ(Log log)
+          throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, TimeoutException {
     this.connectionFactory = new ConnectionFactory();
     this.connectionFactory.setUri(System.getenv("RABBITMQ_BIGWIG_RX_URL"));
     this.connection = connectionFactory.newConnection();
+    this.log = log;
   }
 
-  public void consume(String queue) throws Exception {
+  public void consume(HttpServletRequest request, String queue) throws Exception {
     channel = connection.createChannel();
     channel.queueDeclare(queue, false, false, false, null);
     consumer = new DefaultConsumer(channel) {
@@ -41,20 +42,30 @@ public class RabbitMQ {
       public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
               throws IOException {
         String message = new String(body, "UTF-8");
-        System.out.println(" [x] Received '" + message + "'");
+        log.info(request, " [x] Received '" + message + "'");
       }
     };
     channel.basicConsume(queue, true, consumer);
   }
 
-  public void push(String queue, String message) throws Exception {
-    channel = connection.createChannel();
-    Event event = new Event(message);
-    channel.basicPublish("", queue, null, Event.asJsonString(event).getBytes());
-    System.out.println(" [x] Sent '" + Event.asJsonString(event) + "'");
+  boolean isQueueEmpty(String queue) throws IOException {
+    return channel.queueDeclarePassive(queue).getMessageCount() == 0;
   }
 
-  public boolean isQueueEmpty(String queue) throws IOException {
-    return channel.queueDeclarePassive(queue).getMessageCount() == 0;
+  @Override
+  public void push(HttpServletRequest request, Object queue, Object message) {
+    try {
+      channel = connection.createChannel();
+      Event event = new Event(message);
+      channel.basicPublish("", String.valueOf(queue), null, Event.asJsonString(event).getBytes());
+      log.info(request, " [x] Sent '" + Event.asJsonString(event) + "'");
+    } catch (IOException ex) {
+      log.error(request, ex.getMessage());
+      try {
+        channel.basicRecover(false);
+      } catch (IOException e) {
+        log.error(request, e.getMessage());
+      }
+    }
   }
 }

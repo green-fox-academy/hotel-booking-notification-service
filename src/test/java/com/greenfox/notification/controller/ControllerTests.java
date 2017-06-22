@@ -1,16 +1,8 @@
 package com.greenfox.notification.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
 import com.greenfox.notification.NotificationApplication;
-import com.greenfox.notification.model.Heartbeat;
+import com.greenfox.notification.model.classes.Heartbeat;
 import com.greenfox.notification.repository.HeartbeatRepository;
-import java.nio.charset.Charset;
-
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import org.junit.Before;
@@ -24,6 +16,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import java.nio.charset.Charset;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 
 @RunWith(SpringRunner.class)

@@ -1,11 +1,12 @@
-package com.greenfox.notification.model;
+package com.greenfox.notification.model.classes;
 
+import com.greenfox.notification.model.interfaces.Response;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class DatabaseResponse {
+public class DatabaseResponse implements Response {
   private String status;
   private String database;
   private String queue;

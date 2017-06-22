@@ -1,30 +1,22 @@
-package com.greenfox.notification.model;
+package com.greenfox.notification.model.classes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
 public class Event {
   private String time;
   private String hostname;
-  private String message;
+  private Object message;
 
-  public Event(String message) {
+  public Event(Object message) {
     this.time = String.valueOf(LocalDate.now());
     this.hostname = System.getenv("HOSTNAME");
     this.message = message;
-  }
-
-  @Override
-  public String toString() {
-    return "Event{" +
-        "time=" + time +
-        ", hostname= " + hostname +
-        ", message= " + message +'\'' +
-    '}';
   }
 
   public static String asJsonString(final Object obj) {
