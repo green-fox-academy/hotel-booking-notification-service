@@ -1,16 +1,11 @@
 package com.greenfox.notification.service;
 
-import com.greenfox.notification.model.Data;
-import com.sendgrid.Email;
-import com.sendgrid.Mail;
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
+import com.greenfox.notification.model.classes.Data;
+import com.sendgrid.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class EmailSenderService {
@@ -19,6 +14,7 @@ public class EmailSenderService {
   private String subject;
   private SendGrid sg;
   private final RabbitMQ rabbitMQ;
+  private Email sender;
 
   @Autowired
   public EmailSenderService(Log log, RabbitMQ rabbitMQ) {
@@ -27,16 +23,16 @@ public class EmailSenderService {
     this.subject = "Registration process";
     this.sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
     this.rabbitMQ = rabbitMQ;
+    this.sender = new Email("test@example.com");
   }
 
   public void sendConfirmationEmail(HttpServletRequest servletRequest, Data data) throws Exception {
-    Email from = new Email("test@example.com");
-    Email to = new Email(data.getAttributes().getEmail());
+    Email recipient = new Email(data.getAttributes().getEmail());
     com.sendgrid.Content content = new com.sendgrid.Content("text/plain", "vilmoskorte");
-    Mail mail = new Mail(from, subject, to, content);
+    Mail mail = new Mail(sender, subject, recipient, content);
     mail.personalization.get(0).addSubstitution("-name-", data.getAttributes().getName());
     mail.setTemplateId(System.getenv("TEMPLATE_ID"));
-    rabbitMQ.pushEmail("email", mail);
+    rabbitMQ.push("email", mail);
     rabbitMQ.consume("email");
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");

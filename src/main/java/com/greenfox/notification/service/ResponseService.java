@@ -1,7 +1,7 @@
 package com.greenfox.notification.service;
 
-import com.greenfox.notification.model.DatabaseResponse;
-import com.greenfox.notification.model.OkResponse;
+import com.greenfox.notification.model.classes.DatabaseResponse;
+import com.greenfox.notification.model.classes.OkResponse;
 import com.greenfox.notification.repository.HeartbeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,20 +1,21 @@
 package com.greenfox.notification.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import com.greenfox.notification.model.DatabaseResponse;
+import com.greenfox.notification.model.classes.DatabaseResponse;
 import com.greenfox.notification.repository.HeartbeatRepository;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.time.LocalDateTime;
-import javax.servlet.http.HttpServletRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.time.LocalDateTime;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class ServiceTests {
   private HeartbeatRepository heartbeatRepositoryMock;

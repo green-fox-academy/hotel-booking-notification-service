@@ -1,28 +1,22 @@
 package com.greenfox.notification.service;
 
-import com.greenfox.notification.model.Event;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.greenfox.notification.model.classes.Event;
+import com.greenfox.notification.model.interfaces.MessageQueue;
+import com.rabbitmq.client.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeoutException;
 
-import com.sendgrid.Mail;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.stereotype.Service;
-
 @Service
 @Getter
 @Setter
-public class RabbitMQ {
+public class RabbitMQ implements MessageQueue {
   private Connection connection;
   private ConnectionFactory connectionFactory;
   private Channel channel;
@@ -49,21 +43,15 @@ public class RabbitMQ {
     channel.basicConsume(queue, true, consumer);
   }
 
-  public void push(String queue, String message) throws Exception {
-    channel = connection.createChannel();
-    Event event = new Event(message);
-    channel.basicPublish("", queue, null, Event.asJsonString(event).getBytes());
-    System.out.println(" [x] Sent '" + Event.asJsonString(event) + "'");
-  }
-
-  public void pushEmail(String queue, Mail mail) throws Exception {
-    channel = connection.createChannel();
-    Event event = new Event(mail);
-    channel.basicPublish("", queue, null, Event.asJsonString(event).getBytes());
-    System.out.println(" [x] Sent '" + Event.asJsonString(event) + "'");
-  }
-
   public boolean isQueueEmpty(String queue) throws IOException {
     return channel.queueDeclarePassive(queue).getMessageCount() == 0;
+  }
+
+  @Override
+  public void push(Object queue, Object message) throws IOException {
+    channel = connection.createChannel();
+    Event event = new Event(message);
+    channel.basicPublish("", String.valueOf(queue), null, Event.asJsonString(event).getBytes());
+    System.out.println(" [x] Sent '" + Event.asJsonString(event) + "'");
   }
 }
