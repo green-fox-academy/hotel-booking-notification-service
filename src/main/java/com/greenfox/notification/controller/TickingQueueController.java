@@ -1,29 +1,29 @@
 package com.greenfox.notification.controller;
 
-import com.greenfox.notification.model.classes.Data;
-import com.greenfox.notification.service.RabbitMQ;
+import com.greenfox.notification.model.classes.Event;
+import com.greenfox.notification.service.TickingQueueEventService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class TickingQueueController {
-
-  private RabbitMQ rabbitMQ;
+  private final TickingQueueEventService tickingQueueEventService;
+  private Event event;
 
   @Autowired
-  public TickingQueueController(RabbitMQ rabbitMQ){
-    this.rabbitMQ = rabbitMQ;
+  public TickingQueueController(TickingQueueEventService tickingQueueEventService) {
+    this.tickingQueueEventService = tickingQueueEventService;
+    this.event = event;
   }
 
-  @PostMapping("/tickqueue")
-  public Data registration(@RequestBody Data data, HttpServletRequest request, Object queue, Object message) throws Exception {
-    rabbitMQ.consume(request.getRequestURI(),"consumee");
-    rabbitMQ.push(request.getRequestURI(),"consume","pushed");
-    return data;
+  @GetMapping("/ticktest")
+  public int eventTicking(HttpServletRequest httpServletRequest) throws Exception {
+ tickingQueueEventService.consumeEvent(httpServletRequest.getRequestURI());
+ tickingQueueEventService.pushEvent(httpServletRequest.getRequestURI(),event);
+ event.setTickCounter(event.getTickCounter() + 1);
+    return event.getTickCounter();
   }
-
 }
