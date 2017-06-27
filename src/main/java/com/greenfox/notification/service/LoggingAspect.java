@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class MyAspect {
+public class LoggingAspect {
   private final Log log;
 
   @Autowired
-  public MyAspect(Log log) {
+  public LoggingAspect(Log log) {
     this.log = log;
   }
 
