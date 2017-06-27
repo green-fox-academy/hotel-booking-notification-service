@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
@@ -34,7 +33,7 @@ public class RabbitMQ implements MessageQueue {
     this.log = log;
   }
 
-  public void consume(HttpServletRequest request, String queue) throws Exception {
+  public void consume(String request, String queue) throws Exception {
     channel = connection.createChannel();
     channel.queueDeclare(queue, false, false, false, null);
     consumer = new DefaultConsumer(channel) {
@@ -53,7 +52,7 @@ public class RabbitMQ implements MessageQueue {
   }
 
   @Override
-  public void push(HttpServletRequest request, Object queue, Object message) {
+  public void push(String request, Object queue, Object message) {
     try {
       channel = connection.createChannel();
       Event event = new Event(message);

@@ -109,7 +109,7 @@ public class ServiceTests {
   public void testLogWithPrintOut() throws Exception {
     Log log = new Log();
     when(requestMock.getRequestURI()).thenReturn("/test");
-    log.info(requestMock, "test message");
+    log.info("test", "test message");
     assertEquals("INFO " + log.getDateTime() + " " + HOSTNAME + " " +
             "test message " + "HTTP-REQUEST " + "/test", outContent.toString().trim());
   }
@@ -118,7 +118,7 @@ public class ServiceTests {
   public void testLogWithErrorPrintOut() throws Exception {
     Log log = new Log();
     when(requestMock.getRequestURI()).thenReturn("/test");
-    log.error(requestMock, "test message with error");
+    log.error("test", "test message with error");
     assertEquals("ERROR " + log.getDateTime() + " " + HOSTNAME + " " +
             "test message with error " + "HTTP-ERROR " + "/test", errContent.toString().trim());
   }
@@ -156,7 +156,7 @@ public class ServiceTests {
       return null;
     }).when(mockRequest).setEndpoint("mail/send");
     when(mockSg.api(mockRequest)).thenReturn(mockResponse);
-    emailSenderServiceMock.sendConfirmationEmail(mockHttpServletRequest, mockData);
+    emailSenderServiceMock.sendConfirmationEmail("test", mockData);
     verify(mockSg.api(mockRequest));
     assertThat(mockMail, is(notNullValue()));
   }

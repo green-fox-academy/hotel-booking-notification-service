@@ -5,8 +5,6 @@ import com.sendgrid.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Service
 public class EmailSenderService {
   private final Log log;
@@ -24,7 +22,7 @@ public class EmailSenderService {
     this.emailGenerator = emailGenerator;
   }
 
-  public Mail sendConfirmationEmail(HttpServletRequest servletRequest, Data data) throws Exception {
+  public Mail sendConfirmationEmail(String servletRequest, Data data) throws Exception {
     Mail mail = emailGenerator.generateEmail(data);
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
@@ -34,11 +32,11 @@ public class EmailSenderService {
     return mail;
   }
 
-  public void pushEmail(HttpServletRequest servletRequest, Mail mail) {
+  public void pushEmail(String servletRequest, Mail mail) {
     rabbitMQ.push(servletRequest, "email", mail);
   }
 
-  public void consumeEmail(HttpServletRequest servletRequest) {
+  public void consumeEmail(String servletRequest) {
     try {
       rabbitMQ.consume(servletRequest, "email");
     } catch (Exception e) {
