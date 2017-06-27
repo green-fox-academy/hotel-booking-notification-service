@@ -25,4 +25,5 @@ public class RegistrationConfirmationController {
     emailSenderService.consumeEmail(httpServletRequest.getRequestURI());
     return data;
   }
+  
 }
