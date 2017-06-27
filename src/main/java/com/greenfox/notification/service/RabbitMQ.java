@@ -17,7 +17,7 @@ import java.util.concurrent.TimeoutException;
 @Service
 @Getter
 @Setter
-public class RabbitMQ implements MessageQueue {
+public class RabbitMQ implements MessageQueue{
   private Connection connection;
   private ConnectionFactory connectionFactory;
   private Channel channel;
