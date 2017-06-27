@@ -33,8 +33,8 @@ public class Log {
     }
   }
 
-  public void debug(HttpServletRequest request, String message) {
-    printLog(request.getRequestURI(),"DEBUG", message);
+  public void debug(String request, String message) {
+    printLog(request,"DEBUG", message);
   }
 
   public void info(String request, String message) {
