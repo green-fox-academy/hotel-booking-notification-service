@@ -28,7 +28,7 @@ public class EmailSenderService {
     request.setEndpoint("mail/send");
     request.setBody(mail.build());
     Response response = sg.api(request);
-    log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
+    log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + "  " + response.getHeaders()));
     return mail;
   }
 
