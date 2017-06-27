@@ -10,8 +10,10 @@ public class EmailSenderService {
   private final Log log;
   private Request request;
   private SendGrid sg;
+  private Response response;
   private final RabbitMQ rabbitMQ;
   private final EmailGenerator emailGenerator;
+  private static Long waitTime = Long.valueOf(System.getenv("DELAY_TIME"));
 
   @Autowired
   public EmailSenderService(Log log, RabbitMQ rabbitMQ, EmailGenerator emailGenerator) {
@@ -20,6 +22,7 @@ public class EmailSenderService {
     this.sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
     this.rabbitMQ = rabbitMQ;
     this.emailGenerator = emailGenerator;
+    this.response = new Response();
   }
 
   public Mail sendConfirmationEmail(String servletRequest, Data data) throws Exception {
@@ -27,8 +30,17 @@ public class EmailSenderService {
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
     request.setBody(mail.build());
-    Response response = sg.api(request);
-    log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + "  " + response.getHeaders()));
+    int count = 0;
+    while (count == Integer.valueOf(System.getenv("TRY_NUMBERS"))) {
+      response = sg.api(request);
+      count++;
+      if (response.getStatusCode() == 201) {
+        break;
+      }
+      sg.wait(waitTime);
+      waitTime *= 2;
+    }
+    log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
     return mail;
   }
 
