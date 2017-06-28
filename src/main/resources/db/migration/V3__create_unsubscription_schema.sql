@@ -1,0 +1,1 @@
+CREATE TABLE unsubscription(id INTEGER NOT NULL, PRIMARY KEY (id), email VARCHAR)

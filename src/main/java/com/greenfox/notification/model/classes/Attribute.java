@@ -31,4 +31,9 @@ public class Attribute {
     this.simpleDateService = simpleDateService;
     this.created_at = simpleDateService.getDateInString();
   }
+
+  public Attribute(String email, String created_at) {
+    this.email = email;
+    this.created_at = created_at;
+  }
 }

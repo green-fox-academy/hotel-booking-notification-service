@@ -9,15 +9,20 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "unsubcription")
+@Table(name = "unsubscription")
 @Getter
 @Setter
-public class Unsubcription {
+public class Unsubscription {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  long id;
+  private long id;
+  private String email;
 
-  public Unsubcription() {
+  public Unsubscription() {
+  }
+
+  public Unsubscription(String email) {
+    this.email = email;
   }
 }

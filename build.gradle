@@ -10,10 +10,20 @@ buildscript {
 	}
 }
 
+plugins {
+	id "org.flywaydb.flyway" version "4.2.0"
+}
+
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'application'
 
+flyway {
+	url = 'jdbc:postgresql://ec2-107-21-99-176.compute-1.amazonaws.com:5432/dak6ekjc6qcead?sslmode=require'
+	user = 'nfzkkffmyuhntp'
+	password = '59bf97be4b3cef84d17d0f62b66f808bf811a54dce5727bd5f4e0b4beb4e7a03'
+
+}
 
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
