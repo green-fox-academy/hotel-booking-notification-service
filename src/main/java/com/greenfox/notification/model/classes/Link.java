@@ -12,4 +12,7 @@ public class Link {
   public Link(String self) {
     this.self = self;
   }
+
+  public Link() {
+  }
 }
