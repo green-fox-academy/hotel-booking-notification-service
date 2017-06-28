@@ -5,6 +5,8 @@ import com.sendgrid.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 public class EmailSenderService {
   private final Log log;
@@ -30,16 +32,7 @@ public class EmailSenderService {
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
     request.setBody(mail.build());
-    int count = 0;
-    while (count == Integer.valueOf(System.getenv("TRY_NUMBERS"))) {
-      response = sg.api(request);
-      count++;
-      if (response.getStatusCode() == 201) {
-        break;
-      }
-      sg.wait(waitTime);
-      waitTime *= 2;
-    }
+    retryOfMails(request);
     log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
     return mail;
   }
@@ -53,6 +46,23 @@ public class EmailSenderService {
       rabbitMQ.consume(servletRequest, "email");
     } catch (Exception e) {
       log.error(servletRequest, e.getMessage());
+    }
+  }
+
+  private void retryOfMails(Request request) throws InterruptedException {
+    int count = 0;
+    while (count == Integer.valueOf(System.getenv("TRY_NUMBERS"))) {
+      try {
+        response = sg.api(request);
+      } catch (IOException e) {
+        log.error("retryOfMails ", e.getMessage());
+      }
+      count++;
+      if (response.getStatusCode() == 201) {
+        break;
+      }
+      sg.wait(waitTime);
+      waitTime *= 2;
     }
   }
 }
