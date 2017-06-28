@@ -18,4 +18,13 @@ public class Attribute {
 
   public Attribute() {
   }
+
+  @Override
+  public String toString() {
+    return "Attribute{" +
+            "email='" + email + '\'' +
+            ", name='" + name + '\'' +
+            ", url='" + url + '\'' +
+            '}';
+  }
 }

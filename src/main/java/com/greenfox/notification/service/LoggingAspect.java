@@ -1,5 +1,6 @@
 package com.greenfox.notification.service;
 
+import com.greenfox.notification.model.classes.Data;
 import com.greenfox.notification.model.interfaces.Response;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -35,8 +36,8 @@ public class LoggingAspect {
   @AfterReturning(
           pointcut = "execution(* com.greenfox.notification.controller.RegistrationConfirmationController.registration(..))",
           returning = "retVal")
-  public void logInfoRegistration(JoinPoint joinPoint, Response retVal) {
-    log.info("/email/registration " + joinPoint.getSignature().getName() + " method", retVal.toString());
+  public void logInfoRegistration(JoinPoint joinPoint, Data retVal) {
+    log.info("/email/registration", joinPoint.getSignature().getName() + " method " + retVal.toString());
   }
 
   @AfterThrowing(

@@ -51,17 +51,17 @@ public class EmailSenderService {
 
   private void retryOfMails(Request request) throws InterruptedException {
     int count = 0;
-    while (count == Integer.valueOf(System.getenv("TRY_NUMBERS"))) {
+    while (count != Integer.valueOf(System.getenv("TRY_NUMBERS"))) {
       try {
         response = sg.api(request);
       } catch (IOException e) {
         log.error("retryOfMails ", e.getMessage());
       }
       count++;
-      if (response.getStatusCode() == 201) {
+      if (response.getStatusCode() == 201 || response.getStatusCode() == 200 || response.getStatusCode() == 202) {
         break;
       }
-      sg.wait(waitTime);
+      Thread.sleep(waitTime);
       waitTime *= 2;
     }
   }
