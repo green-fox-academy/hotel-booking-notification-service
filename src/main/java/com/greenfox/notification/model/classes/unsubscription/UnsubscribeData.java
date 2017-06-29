@@ -1,4 +1,4 @@
-package com.greenfox.notification.model.classes.input;
+package com.greenfox.notification.model.classes.unsubscription;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,6 +26,5 @@ public class UnsubscribeData {
   }
 
   public UnsubscribeData(){
-
   }
 }

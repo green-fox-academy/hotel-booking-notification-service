@@ -1,4 +1,4 @@
-package com.greenfox.notification.model.classes;
+package com.greenfox.notification.model.classes.unsubscription;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Link {
-
   private String self;
 
   public Link(String self) {

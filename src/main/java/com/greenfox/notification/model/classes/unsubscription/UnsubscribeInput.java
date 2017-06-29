@@ -1,4 +1,4 @@
-package com.greenfox.notification.model.classes.input;
+package com.greenfox.notification.model.classes.unsubscription;
 
 
 import lombok.Getter;

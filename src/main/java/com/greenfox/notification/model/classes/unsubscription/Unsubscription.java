@@ -1,7 +1,5 @@
-package com.greenfox.notification.model.classes.output;
+package com.greenfox.notification.model.classes.unsubscription;
 
-import com.greenfox.notification.model.classes.Link;
-import com.greenfox.notification.model.classes.input.UnsubscribeData;
 import lombok.Getter;
 import lombok.Setter;
 
