@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Getter
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Entity
 public class UnsubscribeAttribute {
   @Id
+  @NotEmpty
   private String email;
   @JsonProperty(value = "created_at")
   private Date createdAt;

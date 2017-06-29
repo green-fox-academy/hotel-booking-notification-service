@@ -10,9 +10,9 @@ public class Error {
   private String title;
   private String detail;
 
-  public Error(String status, String title, String detail) {
+  public Error() {
     this.status = "400";
     this.title = "Bad Request";
-    this.detail = detail;
+    this.detail = "The attribute field: \"email\" is missing";
   }
 }

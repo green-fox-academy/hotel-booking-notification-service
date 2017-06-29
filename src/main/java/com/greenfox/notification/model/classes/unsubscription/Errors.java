@@ -10,7 +10,8 @@ import lombok.Setter;
 public class Errors {
   private List<Error> errors;
 
-  public Errors() {
+  public Errors(Error error) {
     this.errors = new ArrayList<>();
+    errors.add(error);
   }
 }
