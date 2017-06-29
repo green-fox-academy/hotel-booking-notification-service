@@ -1,12 +1,13 @@
 package com.greenfox.notification.model.classes.unsubscription;
 
+import com.greenfox.notification.model.interfaces.Response;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Getter
 @Setter
-public class Unsubscription {
+public class Unsubscription implements Response {
   private Link links;
   private UnsubscribeData data;
 

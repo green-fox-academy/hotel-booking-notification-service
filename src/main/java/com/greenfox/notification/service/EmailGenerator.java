@@ -1,6 +1,6 @@
 package com.greenfox.notification.service;
 
-import com.greenfox.notification.model.classes.Data;
+import com.greenfox.notification.model.classes.heartbeat.Data;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;

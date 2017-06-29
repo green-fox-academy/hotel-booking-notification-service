@@ -1,4 +1,4 @@
-package com.greenfox.notification.model.classes;
+package com.greenfox.notification.model.classes.registration;
 
 import lombok.Getter;
 import lombok.Setter;

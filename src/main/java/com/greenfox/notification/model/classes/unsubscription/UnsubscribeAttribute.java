@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Setter
 @Entity
 public class UnsubscribeAttribute {
+
   @Id
   @NotEmpty
   private String email;
@@ -25,6 +26,10 @@ public class UnsubscribeAttribute {
 
   public UnsubscribeAttribute(String email, Date createdAt) {
     this.email = email;
+    this.createdAt = createdAt;
+  }
+
+  public UnsubscribeAttribute(Date createdAt) {
     this.createdAt = createdAt;
   }
 

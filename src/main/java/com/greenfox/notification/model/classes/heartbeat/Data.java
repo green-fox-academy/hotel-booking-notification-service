@@ -1,5 +1,6 @@
-package com.greenfox.notification.model.classes;
+package com.greenfox.notification.model.classes.heartbeat;
 
+import com.greenfox.notification.model.classes.registration.Attribute;
 import lombok.Getter;
 import lombok.Setter;
 

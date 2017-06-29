@@ -1,7 +1,7 @@
 package com.greenfox.notification.controller;
 
 import com.greenfox.notification.NotificationApplication;
-import com.greenfox.notification.model.classes.Heartbeat;
+import com.greenfox.notification.model.classes.heartbeat.Heartbeat;
 import com.greenfox.notification.repository.HeartbeatRepository;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
