@@ -4,21 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
-public class Event {
-  private String time;
-  private String hostname;
-  private Object message;
+public class TickEvent {
   private int tickCounter;
+  private Object message;
 
-  public Event(Object message) {
-    this.time = String.valueOf(LocalDate.now());
-    this.hostname = System.getenv("HOSTNAME");
-    this.message = message;
+  public TickEvent(Object message) {
     this.tickCounter = tickCounter;
+    this.message = message;
   }
 
   public static String asJsonString(final Object obj) {

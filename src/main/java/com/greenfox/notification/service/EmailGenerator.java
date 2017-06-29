@@ -6,6 +6,7 @@ import com.sendgrid.Email;
 import com.sendgrid.Mail;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class EmailGenerator {
   private Email sender;
