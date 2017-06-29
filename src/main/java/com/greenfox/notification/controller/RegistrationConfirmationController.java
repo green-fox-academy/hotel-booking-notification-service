@@ -1,6 +1,6 @@
 package com.greenfox.notification.controller;
 
-import com.greenfox.notification.model.classes.Data;
+import com.greenfox.notification.model.classes.heartbeat.Data;
 import com.greenfox.notification.service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,4 +25,5 @@ public class RegistrationConfirmationController {
     emailSenderService.consumeEmail(httpServletRequest.getRequestURI());
     return data;
   }
+
 }

@@ -45,4 +45,18 @@ public class LoggingAspect {
   public void logErrorRegistration(JoinPoint joinPoint, Exception error) {
     log.error("/email/registration " + joinPoint.getSignature().getName() + " method", error.getMessage());
   }
+
+  @AfterReturning(
+      pointcut = "execution(* com.greenfox.notification.controller.UnsubscribeController.letUsersUnsubscribe(..))",
+      returning = "retVal")
+  public void logInfoUnsubscription(JoinPoint joinPoint, Response retVal) {
+    log.info("/subscriptions " + joinPoint.getSignature().getName() + " method", retVal.toString());
+  }
+
+  @AfterThrowing(
+      pointcut = "execution(* com.greenfox.notification.controller.UnsubscribeController.letUsersUnsubscribe(..))",
+      throwing = "error")
+  public void logErrorUnsubscription(JoinPoint joinPoint, Exception error) {
+    log.error("/subscriptions " + joinPoint.getSignature().getName() + " method", error.getMessage());
+  }
 }
