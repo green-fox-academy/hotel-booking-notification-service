@@ -16,5 +16,14 @@ public class DatabaseResponse implements Response {
     this.database = database;
     this.queue = queue;
   }
+
+  @Override
+  public String toString() {
+    return "DatabaseResponse{" +
+            "status='" + status + '\'' +
+            ", database='" + database + '\'' +
+            ", queue='" + queue + '\'' +
+            '}';
+  }
 }
 

@@ -1,11 +1,12 @@
 package com.greenfox.notification.service;
 
-import java.util.Arrays;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,15 +37,15 @@ public class Log {
     printLog(request.getRequestURI(),"DEBUG", message);
   }
 
-  public void info(HttpServletRequest request, String message) {
-    printLog(request.getRequestURI(),"INFO", message);
+  public void info(String request, String message) {
+    printLog(request,"INFO", message);
   }
 
   public void warn(HttpServletRequest request, String message) {
     printLog(request.getRequestURI(),"WARN", message);
   }
 
-  public void error(HttpServletRequest request, String message) {
-    printLog(request.getRequestURI(),"ERROR", message);
+  public void error(String request, String message) {
+    printLog(request,"ERROR", message);
   }
 }

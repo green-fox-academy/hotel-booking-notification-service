@@ -20,8 +20,9 @@ public class RegistrationConfirmationController {
 
   @PostMapping("/email/registration")
   public Data registration(@RequestBody Data data, HttpServletRequest httpServletRequest) throws Exception {
-    emailSenderService.pushEmail(httpServletRequest, emailSenderService.sendConfirmationEmail(httpServletRequest, data));
-    emailSenderService.consumeEmail(httpServletRequest);
+    emailSenderService.pushEmail(httpServletRequest.getRequestURI(),
+                                 emailSenderService.sendConfirmationEmail(httpServletRequest.getRequestURI(), data));
+    emailSenderService.consumeEmail(httpServletRequest.getRequestURI());
     return data;
   }
 }
