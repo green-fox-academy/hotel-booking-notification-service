@@ -12,13 +12,11 @@ public class Event {
   private String time;
   private String hostname;
   private Object message;
-  private int tickCounter;
 
   public Event(Object message) {
     this.time = String.valueOf(LocalDate.now());
     this.hostname = System.getenv("HOSTNAME");
     this.message = message;
-    this.tickCounter = tickCounter;
   }
 
   public static String asJsonString(final Object obj) {
