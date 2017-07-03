@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 public class RabbitMQ implements MessageQueue {
+
   private Connection connection;
   private ConnectionFactory connectionFactory;
   private Channel channel;
@@ -33,16 +34,18 @@ public class RabbitMQ implements MessageQueue {
   private final Log log;
   private Request requestMail;
   private AMQP.BasicProperties.Builder props;
+  private int actualDelayTime;
 
   @Autowired
   public RabbitMQ(Log log)
-          throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, TimeoutException {
+      throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, TimeoutException {
     this.connectionFactory = new ConnectionFactory();
     this.connectionFactory.setUri(System.getenv("RABBITMQ_BIGWIG_RX_URL"));
     this.connection = connectionFactory.newConnection();
     this.log = log;
     this.requestMail = new Request();
     this.props = new AMQP.BasicProperties.Builder();
+    this.actualDelayTime = Integer.valueOf(System.getenv("DELAY_TIME"));
   }
 
   public void consume(String request, String queue) throws Exception {
@@ -50,8 +53,9 @@ public class RabbitMQ implements MessageQueue {
     channel.queueDeclare(queue, false, false, false, null);
     consumer = new DefaultConsumer(channel) {
       @Override
-      public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-              throws IOException {
+      public void handleDelivery(String consumerTag, Envelope envelope,
+          AMQP.BasicProperties properties, byte[] body)
+          throws IOException {
         String message = new String(body, "UTF-8");
         log.info(request, " [x] Received '" + message + "'");
       }
@@ -65,24 +69,35 @@ public class RabbitMQ implements MessageQueue {
 
   @Override
   public void push(String request, Object queue, Object message) {
+    int count = 0;
     try {
       channel = connection.createChannel();
       Map<String, Object> args = new HashMap<>();
       args.put("x-delayed-type", "direct");
-      channel.exchangeDeclare("my-exchange", "x-delayed-message", true, false, args);
+      channel.exchangeDeclare((String) queue, "x-delayed-message", true, false, args);
       Event event = new Event(message);
-      channel.basicPublish("my-exchange", String.valueOf(queue), props.build(), Event.asJsonString(event).getBytes());
+      channel.basicPublish((String) queue, String.valueOf(queue), props.build(),
+          Event.asJsonString(event).getBytes());
+      count++;
+      System.out.println("publish utan " + count);
       log.info(request, " [x] Sent '" + Event.asJsonString(event) + "'");
     } catch (IOException ex) {
       log.error(request, ex.getMessage());
       try {
-        Map <String, Object> headers = new HashMap<>();
-        headers.put("x-delay", Integer.valueOf(System.getenv("DELAY_TIME")));
-        props.headers(headers);
-        channel.basicRecover(true);
+        while (Integer.valueOf(System.getenv("TRY_NUMBER")) != count) {
+          Map<String, Object> headers = new HashMap<>();
+          headers.put("x-delay", actualDelayTime);
+          props.headers(headers);
+          System.out.println("basic elott" + actualDelayTime);
+          channel.basicRecover(true);
+          actualDelayTime *= 2;
+          System.out.println("szorzas utan " + actualDelayTime);
+        }
       } catch (IOException e) {
         log.error(request, e.getMessage());
       }
+    } finally {
+      actualDelayTime = Integer.valueOf(System.getenv("DELAY_TIME"));
     }
   }
 }
