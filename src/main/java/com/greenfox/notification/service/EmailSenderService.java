@@ -1,11 +1,13 @@
 package com.greenfox.notification.service;
 
 import com.greenfox.notification.model.classes.Data;
-import com.sendgrid.*;
+import com.sendgrid.Mail;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 @Service
 public class EmailSenderService {
@@ -15,7 +17,6 @@ public class EmailSenderService {
   private Response response;
   private final RabbitMQ rabbitMQ;
   private final EmailGenerator emailGenerator;
-  private static Long waitTime = Long.valueOf(System.getenv("DELAY_TIME"));
 
   @Autowired
   public EmailSenderService(Log log, RabbitMQ rabbitMQ, EmailGenerator emailGenerator) {
@@ -32,13 +33,14 @@ public class EmailSenderService {
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
     request.setBody(mail.build());
-    retryOfMails(request);
+    response = sg.api(request);
     log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
     return mail;
   }
 
   public void pushEmail(String servletRequest, Mail mail) {
     rabbitMQ.push(servletRequest, "email", mail);
+
   }
 
   public void consumeEmail(String servletRequest) {
@@ -46,23 +48,6 @@ public class EmailSenderService {
       rabbitMQ.consume(servletRequest, "email");
     } catch (Exception e) {
       log.error(servletRequest, e.getMessage());
-    }
-  }
-
-  private void retryOfMails(Request request) throws InterruptedException {
-    int count = 0;
-    while (count != Integer.valueOf(System.getenv("TRY_NUMBERS"))) {
-      try {
-        response = sg.api(request);
-      } catch (IOException e) {
-        log.error("retryOfMails ", e.getMessage());
-      }
-      count++;
-      if (response.getStatusCode() == 201 || response.getStatusCode() == 200 || response.getStatusCode() == 202) {
-        break;
-      }
-      Thread.sleep(waitTime);
-      waitTime *= 2;
     }
   }
 }
