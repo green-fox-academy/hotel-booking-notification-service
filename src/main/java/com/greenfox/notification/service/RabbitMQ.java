@@ -72,9 +72,6 @@ public class RabbitMQ implements MessageQueue {
     int count = 0;
     try {
       channel = connection.createChannel();
-      Map<String, Object> args = new HashMap<>();
-      args.put("x-delayed-type", "direct");
-      channel.exchangeDeclare((String) queue, "x-delayed-message", true, false, args);
       Event event = new Event(message);
       channel.basicPublish((String) queue, String.valueOf(queue), props.build(),
           Event.asJsonString(event).getBytes());
@@ -84,7 +81,10 @@ public class RabbitMQ implements MessageQueue {
     } catch (IOException ex) {
       log.error(request, ex.getMessage());
       try {
-        while (Integer.valueOf(System.getenv("TRY_NUMBER")) != count) {
+        while (Integer.valueOf(System.getenv("TRY_NUMBERS")) != count) {
+          Map<String, Object> args = new HashMap<>();
+          args.put("x-delayed-type", "direct");
+          channel.exchangeDeclare((String) queue, "x-delayed-message", true, false, args);
           Map<String, Object> headers = new HashMap<>();
           headers.put("x-delay", actualDelayTime);
           props.headers(headers);
