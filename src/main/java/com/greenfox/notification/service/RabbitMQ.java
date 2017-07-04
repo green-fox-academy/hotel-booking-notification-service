@@ -44,7 +44,7 @@ public class RabbitMQ implements MessageQueue {
     this.headers = new HashMap<>();
   }
 
-  public void consume(String queue) throws Exception {
+  public void consume(String request, String queue) throws Exception {
     channel = connection.createChannel();
     channel.queueDeclare(queue, false, false, false, null);
     consumer = new DefaultConsumer(channel) {
@@ -53,7 +53,7 @@ public class RabbitMQ implements MessageQueue {
                                  AMQP.BasicProperties properties, byte[] body)
               throws IOException {
         String message = new String(body, "UTF-8");
-        log.info("consume method", " [x] Received '" + message + "'");
+        log.info(request, " [x] Received '" + message + "'");
       }
     };
     channel.basicConsume(queue, true, consumer);

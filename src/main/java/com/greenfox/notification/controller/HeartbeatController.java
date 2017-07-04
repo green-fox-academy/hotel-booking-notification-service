@@ -23,7 +23,7 @@ public class HeartbeatController {
   @GetMapping("/heartbeat")
   public Response getHeartbeats(HttpServletRequest request) throws Exception {
     rabbitMQ.push(request.getRequestURI(), "heartbeat", "wohooo");
-    rabbitMQ.consume("heartbeat");
+    rabbitMQ.consume(request.getRequestURI(), "heartbeat");
     return responseService.checkForResponse();
   }
 }

@@ -17,12 +17,4 @@ public class Data {
 
   public Data() {
   }
-
-  @Override
-  public String toString() {
-    return "Data{" +
-            "type='" + type + '\'' +
-            ", attributes=" + attributes.toString() +
-            '}';
-  }
 }

@@ -1,11 +1,7 @@
 package com.greenfox.notification.service;
 
 import com.greenfox.notification.model.classes.Data;
-import com.sendgrid.Mail;
-import com.sendgrid.Method;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
+import com.sendgrid.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +10,6 @@ public class EmailSenderService {
   private final Log log;
   private Request request;
   private SendGrid sg;
-  private Response response;
   private final RabbitMQ rabbitMQ;
   private final EmailGenerator emailGenerator;
 
@@ -25,7 +20,6 @@ public class EmailSenderService {
     this.sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
     this.rabbitMQ = rabbitMQ;
     this.emailGenerator = emailGenerator;
-    this.response = new Response();
   }
 
   public Mail sendConfirmationEmail(String servletRequest, Data data) throws Exception {
@@ -33,7 +27,7 @@ public class EmailSenderService {
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
     request.setBody(mail.build());
-    response = sg.api(request);
+    Response response = sg.api(request);
     log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
     return mail;
   }
@@ -44,7 +38,7 @@ public class EmailSenderService {
 
   public void consumeEmail(String servletRequest) {
     try {
-      rabbitMQ.consume("email");
+      rabbitMQ.consume(servletRequest, "email");
     } catch (Exception e) {
       log.error(servletRequest, e.getMessage());
     }
