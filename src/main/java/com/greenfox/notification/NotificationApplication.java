@@ -18,7 +18,8 @@ import java.util.concurrent.TimeoutException;
 @EnableAspectJAutoProxy
 public class NotificationApplication {
 
-  public static void main(String[] args) throws URISyntaxException, IOException, TimeoutException, NoSuchAlgorithmException, KeyManagementException {
+  public static void main(String[] args) throws URISyntaxException, IOException, TimeoutException,
+                                                NoSuchAlgorithmException, KeyManagementException {
     SpringApplication.run(NotificationApplication.class, args);
     Log log = new Log();
     TickingQueueEventService tickingQueueEventService = new TickingQueueEventService(log);
@@ -27,15 +28,14 @@ public class NotificationApplication {
     timer.schedule(new TimerTask() {
       @Override
       public void run() {
-        tickingQueueEventService.push("No HTTP Request","consume","Pushed event");
+        tickingQueueEventService.push("No HTTP Request", "consume", "Pushed event");
         try {
-          tickingQueueEventService.consume("No HTTP Request","consume");
+          tickingQueueEventService.consume("No HTTP Request", "consume");
         } catch (Exception e) {
           e.printStackTrace();
         }
       }
     }, 0, 1000 * 60 * MINUTES);
-    // 1000 milliseconds in a second * 60 per minute * the MINUTES variable.
   }
 }
 

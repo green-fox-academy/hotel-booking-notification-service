@@ -3,19 +3,19 @@ package com.greenfox.notification.model.classes.unsubscription;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.greenfox.notification.service.SimpleDateService;
-import java.util.Date;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.util.Date;
+
 @Getter
 @Setter
 @Entity
 public class UnsubscribeAttribute {
-
   @Id
   @NotEmpty
   private String email;
