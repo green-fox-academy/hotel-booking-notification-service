@@ -1,6 +1,6 @@
 package com.greenfox.notification.service;
 
-import com.greenfox.notification.model.classes.Data;
+import com.greenfox.notification.model.classes.heartbeat.Data;
 import com.greenfox.notification.model.interfaces.Response;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
