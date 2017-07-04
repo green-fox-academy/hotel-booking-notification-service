@@ -5,8 +5,6 @@ import com.sendgrid.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Service
 public class EmailSenderService {
   private final Log log;
@@ -32,7 +30,7 @@ public class EmailSenderService {
     request.setMethod(Method.POST);
     request.setEndpoint("mail/send");
     request.setBody(mail.build());
-    retryOfMails(request);
+    response = sg.api(request);
     log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
     return mail;
   }
@@ -43,26 +41,9 @@ public class EmailSenderService {
 
   public void consumeEmail(String servletRequest) {
     try {
-      rabbitMQ.consume(servletRequest, "email");
+      rabbitMQ.consume("email");
     } catch (Exception e) {
       log.error(servletRequest, e.getMessage());
-    }
-  }
-
-  private void retryOfMails(Request request) throws InterruptedException {
-    int count = 0;
-    while (count != Integer.valueOf(System.getenv("TRY_NUMBERS"))) {
-      try {
-        response = sg.api(request);
-      } catch (IOException e) {
-        log.error("retryOfMails ", e.getMessage());
-      }
-      count++;
-      if (response.getStatusCode() == 201 || response.getStatusCode() == 200 || response.getStatusCode() == 202) {
-        break;
-      }
-      Thread.sleep(waitTime);
-      waitTime *= 2;
     }
   }
 }
