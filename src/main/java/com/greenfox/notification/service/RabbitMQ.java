@@ -68,12 +68,8 @@ public class RabbitMQ implements MessageQueue {
     int count = 0;
     try {
       channel = connection.createChannel();
-      args.put("x-delayed-type", "direct");
-      headers.put("x-delay", actualDelayTime);
-      props.headers(headers);
       Event event = new Event(message);
-      channel.exchangeDeclare((String) queue, "x-delayed-message", true, false, args);
-      channel.basicPublish((String) queue, "", props.build(), Event.asJsonString(event).getBytes());
+      channel.basicPublish("", String.valueOf(queue), null, Event.asJsonString(event).getBytes());
       count++;
       log.info(request, " [x] Sent '" + Event.asJsonString(event) + "'");
     } catch (IOException ex) {
@@ -81,8 +77,12 @@ public class RabbitMQ implements MessageQueue {
       while (Integer.valueOf(System.getenv("TRY_NUMBERS")) != count) {
         Event event = new Event(message);
         try {
-          channel.exchangeDeclare((String) queue, "x-delayed-message", true, false, args);
-          channel.basicPublish((String) queue, "", props.build(), Event.asJsonString(event).getBytes());
+          channel = connection.createChannel();
+          args.put("x-delayed-type", "direct");
+          headers.put("x-delay", actualDelayTime);
+          props.headers(headers);
+          channel.exchangeDeclare("x-delay", "x-delayed-message", true, false, args);
+          channel.basicPublish("x-delay", String.valueOf(queue), props.build(), Event.asJsonString(event).getBytes());
           count++;
           channel.basicRecover(true);
         } catch (IOException e) {
