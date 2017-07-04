@@ -1,7 +1,11 @@
 package com.greenfox.notification.service;
 
 import com.greenfox.notification.model.classes.Data;
-import com.sendgrid.*;
+import com.sendgrid.Mail;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +17,6 @@ public class EmailSenderService {
   private Response response;
   private final RabbitMQ rabbitMQ;
   private final EmailGenerator emailGenerator;
-  private static Long waitTime = Long.valueOf(System.getenv("DELAY_TIME"));
 
   @Autowired
   public EmailSenderService(Log log, RabbitMQ rabbitMQ, EmailGenerator emailGenerator) {
