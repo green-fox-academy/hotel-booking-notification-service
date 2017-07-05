@@ -5,5 +5,5 @@ import com.greenfox.notification.model.classes.unsubscription.UnsubscribeData;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UnsubscribeDataRepository extends CrudRepository<UnsubscribeData, Long> {
-  Boolean findByAttributes_Email(String email);
+  UnsubscribeData findByAttributes_Email(String email);
 }
