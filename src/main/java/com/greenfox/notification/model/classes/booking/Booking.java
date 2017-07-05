@@ -1,13 +1,10 @@
 package com.greenfox.notification.model.classes.booking;
 
-import java.sql.Timestamp;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Setter
 @Getter
@@ -15,7 +12,7 @@ import lombok.Setter;
 @Table(name = "booking")
 public class Booking {
   @Id
-  @GeneratedValue( strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   private int guest;
   private Timestamp startDate;
@@ -24,7 +21,7 @@ public class Booking {
   private String description;
 
   public Booking(Long id, int guest, Timestamp startDate, Timestamp endDate,
-      Timestamp createdAt) {
+                 Timestamp createdAt) {
     this.id = id;
     this.guest = guest;
     this.startDate = startDate;
