@@ -15,10 +15,6 @@ public class UnsubscribeFiltering {
   }
 
   public boolean checkIfUserUnsubscribed(Data data) {
-    if (unsubscribeDataRepository.findByAttributes_Email(data.getAttributes().getEmail()) == null) {
-      return false;
-    } else {
-      return true;
-    }
+    return (unsubscribeDataRepository.findByAttributes_Email(data.getAttributes().getEmail()) != null);
   }
 }
