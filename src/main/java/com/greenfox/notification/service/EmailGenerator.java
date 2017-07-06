@@ -1,5 +1,6 @@
 package com.greenfox.notification.service;
 
+import com.greenfox.notification.model.classes.booking.Booking;
 import com.greenfox.notification.model.classes.heartbeat.Data;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
@@ -23,6 +24,15 @@ public class EmailGenerator {
     Mail mail = new Mail(sender, subject, recipient, content);
     mail.personalization.get(0).addSubstitution("-name-", data.getAttributes().getName());
     mail.setTemplateId(System.getenv("TEMPLATE_ID"));
+    return mail;
+  }
+
+  public Mail generateReminderEmail(Booking booking){
+    Email recipient = new Email(booking.getEmail());
+    Content content = new Content("text/plain", "reminder");
+    Mail mail = new Mail(sender, "Reminder", recipient, content);
+    mail.personalization.get(0).addSubstitution("-name-", booking.getContactName());
+    mail.setTemplateId(System.getenv("TEMPLATE_ID_REMINDER_1_DAY"));
     return mail;
   }
 }

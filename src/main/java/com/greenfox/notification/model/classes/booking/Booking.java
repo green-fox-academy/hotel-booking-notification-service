@@ -19,14 +19,18 @@ public class Booking {
   private Timestamp endDate;
   private Timestamp createdAt;
   private String description;
+  private String email;
+  private String contactName;
 
   public Booking(Long id, int guest, Timestamp startDate, Timestamp endDate,
-                 Timestamp createdAt) {
+                 Timestamp createdAt, String contactName, String email) {
     this.id = id;
     this.guest = guest;
     this.startDate = startDate;
     this.endDate = endDate;
     this.createdAt = createdAt;
+    this.contactName = contactName;
+    this.email = email;
   }
 
   public Booking() {
@@ -41,6 +45,8 @@ public class Booking {
             ", endDate=" + endDate +
             ", createdAt=" + createdAt +
             ", description='" + description + '\'' +
+            ", email='" + email + '\'' +
+            ", contactName='" + contactName + '\'' +
             '}';
   }
 }
