@@ -31,4 +31,16 @@ public class Booking {
 
   public Booking() {
   }
+
+  @Override
+  public String toString() {
+    return "Booking{" +
+            "id=" + id +
+            ", guest=" + guest +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", createdAt=" + createdAt +
+            ", description='" + description + '\'' +
+            '}';
+  }
 }

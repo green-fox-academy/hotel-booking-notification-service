@@ -23,6 +23,12 @@ public class BookingController {
     this.timeStampGenerator = timeStampGenerator;
   }
 
+  @GetMapping("/bookings")
+  public Bookings getBookings() {
+    bookings.setBookingList((List<Booking>) bookingRepository.findAll());
+    return bookings;
+  }
+
   @GetMapping("/bookingsone")
   public Bookings isReminderDueOneDay() {
     List<Booking> bookingList = bookingRepository.findAllByStartDateLessThanEqual(timeStampGenerator.getTimeStamp(1));

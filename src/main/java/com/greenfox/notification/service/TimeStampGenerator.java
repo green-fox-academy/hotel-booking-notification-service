@@ -18,4 +18,10 @@ public class TimeStampGenerator {
     long milliSeconds = dayToMilliSeconds(days);
     return new Timestamp(timeStamp.getTime() + milliSeconds);
   }
+
+  public Timestamp getTimeStampNow() {
+    Instant instant = Instant.now();
+    Timestamp timeStamp = java.sql.Timestamp.from(instant);
+    return timeStamp;
+  }
 }
