@@ -14,16 +14,17 @@ import java.util.List;
 @Service
 @Configurable
 public class ReminderSender {
-  @Autowired
-  private BookingNotificationRepository bookingNotificationRepository;
+  private final BookingNotificationRepository bookingNotificationRepository;
   private Request request;
   private SendGrid sg;
   private final EmailGenerator emailGenerator;
 
-  public ReminderSender() {
+  @Autowired
+  public ReminderSender(BookingNotificationRepository bookingNotificationRepository, EmailGenerator emailGenerator) {
     this.request = new Request();
     this.sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
-    this.emailGenerator = new EmailGenerator();
+    this.bookingNotificationRepository = bookingNotificationRepository;
+    this.emailGenerator = emailGenerator;
   }
 
   public void sendReminderMail(List<Booking> bookingList) throws IOException {

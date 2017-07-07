@@ -2,15 +2,19 @@ package com.greenfox.notification.service;
 
 import com.greenfox.notification.model.classes.booking.Booking;
 import com.greenfox.notification.model.classes.booking.Bookings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class BookingReminderFiltering {
-  private TimeStampGenerator timeStampGenerator;
+  private final TimeStampGenerator timeStampGenerator;
 
-  public BookingReminderFiltering() {
-    this.timeStampGenerator = new TimeStampGenerator();
+  @Autowired
+  public BookingReminderFiltering(TimeStampGenerator timeStampGenerator) {
+    this.timeStampGenerator = timeStampGenerator;
   }
 
   public List<Booking> findBookingsWithinOneDay(Bookings bookings) {

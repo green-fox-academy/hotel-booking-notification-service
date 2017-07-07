@@ -28,12 +28,21 @@ import java.util.concurrent.TimeoutException;
 @EnableSpringConfigured
 public class NotificationApplication {
   private static ReminderSender staticReminderSender;
+  private static BookingReminderFiltering staticBookingReminderFiltering;
+  private static RestTemplate restTemplate;
   @Autowired
   private ReminderSender reminderSender;
+  @Autowired
+  private BookingReminderFiltering bookingReminderFiltering;
+  
+  public NotificationApplication() {
+    restTemplate = new RestTemplate();
+  }
 
   @PostConstruct
   public void init(){
     NotificationApplication.staticReminderSender = reminderSender;
+    NotificationApplication.staticBookingReminderFiltering = bookingReminderFiltering;
   }
 
   public static void main(String[] args) throws URISyntaxException, IOException, TimeoutException,
@@ -44,12 +53,10 @@ public class NotificationApplication {
     int MINUTES = 15;
     Timer timer = new Timer();
     timer.schedule(new TimerTask() {
-      private BookingReminderFiltering bookingReminderFiltering = new BookingReminderFiltering();
-      private RestTemplate restTemplate = new RestTemplate();
       @Override
       public void run() {
         Bookings bookings = restTemplate.getForObject("http://localhost:8080/bookings", Bookings.class);
-        List<Booking> bookingsWithinOneDay = bookingReminderFiltering.findBookingsWithinOneDay(bookings);
+        List<Booking> bookingsWithinOneDay = staticBookingReminderFiltering.findBookingsWithinOneDay(bookings);
         try {
           staticReminderSender.sendReminderMail(bookingsWithinOneDay);
         } catch (IOException e) {
