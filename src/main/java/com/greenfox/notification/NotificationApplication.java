@@ -56,10 +56,10 @@ public class NotificationApplication {
       public void run() {
         Bookings bookings = restTemplate.getForObject("http://localhost:8080/bookings", Bookings.class);
         List<Booking> bookingsWithinOneDay = staticBookingReminderFiltering.findBookingsWithinOneDay(bookings);
-        List<Booking> bookingsWithinSevenDay = staticBookingReminderFiltering.findBookingsWithinOneDay(bookings);
+        List<Booking> bookingsWithinSevenDays = staticBookingReminderFiltering.findBookingsWithinSevenDays(bookings);
         try {
           staticReminderSender.sendReminderMail(bookingsWithinOneDay);
-          staticReminderSender.sendReminderMail(bookingsWithinSevenDay);
+          staticReminderSender.sendReminderMail(bookingsWithinSevenDays);
         } catch (IOException e) {
           log.error("reminder send in main() ", e.getMessage());
         }

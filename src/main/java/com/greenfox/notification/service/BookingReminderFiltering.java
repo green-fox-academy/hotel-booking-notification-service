@@ -30,7 +30,7 @@ public class BookingReminderFiltering {
     return filteredList;
   }
 
-  public List<Booking> findBookingsWithinSevenDay(Bookings bookings) {
+  public List<Booking> findBookingsWithinSevenDays(Bookings bookings) {
     List<Booking> bookingList = bookings.getBookingList();
     for (Booking booking : bookingList) {
       if (booking.getStartDate().before(timeStampGenerator.getTimeStamp(6)) &&
