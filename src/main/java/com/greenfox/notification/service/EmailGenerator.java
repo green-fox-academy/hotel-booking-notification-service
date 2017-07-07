@@ -13,12 +13,12 @@ public class EmailGenerator {
   private Email sender;
   private String subject;
 
-  public EmailGenerator(){
+  public EmailGenerator() {
     this.subject = "Registration process";
     this.sender = new Email(System.getenv("EMAIL_ADDRESS"));
   }
 
-  public Mail generateEmail(Data data){
+  public Mail generateEmail(Data data) {
     Email recipient = new Email(data.getAttributes().getEmail());
     Content content = new Content("text/plain", "vilmoskorte");
     Mail mail = new Mail(sender, subject, recipient, content);
@@ -27,8 +27,9 @@ public class EmailGenerator {
     return mail;
   }
 
-  public Mail generateReminderEmail(Booking booking){
+  public Mail generateReminderEmail(Booking booking) {
     Email recipient = new Email(booking.getEmail());
+    System.out.println(booking.getEmail() + " generateReminderEmail method");
     Content content = new Content("text/plain", "reminder");
     Mail mail = new Mail(sender, "Reminder", recipient, content);
     mail.personalization.get(0).addSubstitution("-name-", booking.getContactName());

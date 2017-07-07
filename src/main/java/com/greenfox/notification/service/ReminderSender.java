@@ -1,14 +1,21 @@
 package com.greenfox.notification.service;
 
 import com.greenfox.notification.model.classes.booking.Booking;
+import com.greenfox.notification.model.classes.booking.BookingNotification;
+import com.greenfox.notification.repository.BookingNotificationRepository;
 import com.sendgrid.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 
 @Service
+@Configurable
 public class ReminderSender {
+  @Autowired
+  private BookingNotificationRepository bookingNotificationRepository;
   private Request request;
   private SendGrid sg;
   private final EmailGenerator emailGenerator;
@@ -21,11 +28,20 @@ public class ReminderSender {
 
   public void sendReminderMail(List<Booking> bookingList) throws IOException {
     for (Booking booking : bookingList) {
-      Mail mail = emailGenerator.generateReminderEmail(booking);
-      request.setMethod(Method.POST);
-      request.setEndpoint("mail/send");
-      request.setBody(mail.build());
-      Response response = sg.api(request);
+      if (!bookingNotificationRepository.exists(booking.getEmail())) {
+        Mail mail = emailGenerator.generateReminderEmail(booking);
+        request.setMethod(Method.POST);
+        request.setEndpoint("mail/send");
+        request.setBody(mail.build());
+        Response response = sg.api(request);
+        saveIntoRepository(booking.getEmail());
+      }
     }
+  }
+
+  private void saveIntoRepository(String email) {
+    BookingNotification bookingNotification = new BookingNotification(email);
+    bookingNotification.setNotifiedOneDayBefore(true);
+    bookingNotificationRepository.save(bookingNotification);
   }
 }
