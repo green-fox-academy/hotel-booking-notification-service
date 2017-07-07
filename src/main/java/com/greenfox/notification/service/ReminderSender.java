@@ -5,18 +5,17 @@ import com.greenfox.notification.model.classes.booking.BookingNotification;
 import com.greenfox.notification.repository.BookingNotificationRepository;
 import com.sendgrid.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 
 @Service
-@Configurable
 public class ReminderSender {
   private final BookingNotificationRepository bookingNotificationRepository;
   private Request request;
   private SendGrid sg;
+  private Response response;
   private final EmailGenerator emailGenerator;
 
   @Autowired
@@ -34,7 +33,7 @@ public class ReminderSender {
         request.setMethod(Method.POST);
         request.setEndpoint("mail/send");
         request.setBody(mail.build());
-        Response response = sg.api(request);
+        response = sg.api(request);
         saveIntoRepository(booking.getEmail());
       }
     }

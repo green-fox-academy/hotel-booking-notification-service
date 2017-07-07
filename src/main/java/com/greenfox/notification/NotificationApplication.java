@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -25,7 +24,6 @@ import java.util.concurrent.TimeoutException;
 
 @SpringBootApplication
 @EnableAspectJAutoProxy
-@EnableSpringConfigured
 public class NotificationApplication {
   private static ReminderSender staticReminderSender;
   private static BookingReminderFiltering staticBookingReminderFiltering;
@@ -34,7 +32,7 @@ public class NotificationApplication {
   private ReminderSender reminderSender;
   @Autowired
   private BookingReminderFiltering bookingReminderFiltering;
-  
+
   public NotificationApplication() {
     restTemplate = new RestTemplate();
   }
