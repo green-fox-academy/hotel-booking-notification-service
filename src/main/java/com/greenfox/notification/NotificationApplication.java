@@ -28,13 +28,14 @@ public class NotificationApplication {
   private static ReminderSender staticReminderSender;
   private static BookingReminderFiltering staticBookingReminderFiltering;
   private static RestTemplate restTemplate;
-  @Autowired
-  private ReminderSender reminderSender;
-  @Autowired
-  private BookingReminderFiltering bookingReminderFiltering;
+  private final ReminderSender reminderSender;
+  private final BookingReminderFiltering bookingReminderFiltering;
 
-  public NotificationApplication() {
+  @Autowired
+  public NotificationApplication(ReminderSender reminderSender, BookingReminderFiltering bookingReminderFiltering) {
     restTemplate = new RestTemplate();
+    this.reminderSender = reminderSender;
+    this.bookingReminderFiltering = bookingReminderFiltering;
   }
 
   @PostConstruct
