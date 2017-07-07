@@ -11,21 +11,34 @@ import java.util.List;
 @Service
 public class BookingReminderFiltering {
   private final TimeStampGenerator timeStampGenerator;
+  private List<Booking> filteredList;
 
   @Autowired
   public BookingReminderFiltering(TimeStampGenerator timeStampGenerator) {
     this.timeStampGenerator = timeStampGenerator;
+    this.filteredList = new ArrayList<>();
   }
 
   public List<Booking> findBookingsWithinOneDay(Bookings bookings) {
     List<Booking> bookingList = bookings.getBookingList();
-    List<Booking> returnList = new ArrayList<>();
     for (Booking booking : bookingList) {
       if (booking.getStartDate().before(timeStampGenerator.getTimeStamp(1)) &&
               !booking.getStartDate().before(timeStampGenerator.getTimeStampNow())) {
-        returnList.add(booking);
+        filteredList.add(booking);
       }
     }
-    return returnList;
+    return filteredList;
+  }
+
+  public List<Booking> findBookingsWithinSevenDay(Bookings bookings) {
+    List<Booking> bookingList = bookings.getBookingList();
+    for (Booking booking : bookingList) {
+      if (booking.getStartDate().before(timeStampGenerator.getTimeStamp(6)) &&
+          booking.getStartDate().after(timeStampGenerator.getTimeStamp(7)) &&
+          !booking.getStartDate().before(timeStampGenerator.getTimeStampNow())) {
+        filteredList.add(booking);
+      }
+    }
+    return filteredList;
   }
 }
