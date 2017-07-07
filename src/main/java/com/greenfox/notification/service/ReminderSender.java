@@ -17,13 +17,16 @@ public class ReminderSender {
   private SendGrid sg;
   private Response response;
   private final EmailGenerator emailGenerator;
+  private final Log log;
 
   @Autowired
-  public ReminderSender(BookingNotificationRepository bookingNotificationRepository, EmailGenerator emailGenerator) {
+  public ReminderSender(BookingNotificationRepository bookingNotificationRepository, EmailGenerator emailGenerator,
+                        Log log) {
     this.request = new Request();
     this.sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
     this.bookingNotificationRepository = bookingNotificationRepository;
     this.emailGenerator = emailGenerator;
+    this.log = log;
   }
 
   public void sendReminderMail(List<Booking> bookingList) throws IOException {
@@ -35,6 +38,8 @@ public class ReminderSender {
         request.setBody(mail.build());
         response = sg.api(request);
         saveIntoRepository(booking.getEmail());
+      } else {
+        log.info("sendReminderMail method ", "Booking notification already in database.");
       }
     }
   }
