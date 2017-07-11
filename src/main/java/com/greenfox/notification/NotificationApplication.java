@@ -13,6 +13,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.awt.print.Book;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
@@ -57,9 +58,11 @@ public class NotificationApplication {
         Bookings bookings = restTemplate.getForObject("http://localhost:8080/bookings", Bookings.class);
         List<Booking> bookingsWithinOneDay = staticBookingReminderFiltering.findBookingsWithinOneDay(bookings);
         List<Booking> bookingsWithinSevenDays = staticBookingReminderFiltering.findBookingsWithinSevenDays(bookings);
+        List<Booking> bookingsWithinFourteenDays = staticBookingReminderFiltering.findBookingsWithinFourteenDays(bookings);
         try {
           staticReminderSender.sendReminderMail(bookingsWithinOneDay);
           staticReminderSender.sendReminderMail(bookingsWithinSevenDays);
+          staticReminderSender.sendReminderMail(bookingsWithinFourteenDays);
         } catch (IOException e) {
           log.error("reminder send in main() ", e.getMessage());
         }

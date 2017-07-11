@@ -41,4 +41,16 @@ public class BookingReminderFiltering {
     }
     return filteredList;
   }
+
+  public List<Booking> findBookingsWithinFourteenDays(Bookings bookings) {
+    List<Booking> bookingList = bookings.getBookingList();
+    for (Booking booking : bookingList) {
+      if (booking.getStartDate().before(timeStampGenerator.getTimeStamp(13)) &&
+              booking.getStartDate().after(timeStampGenerator.getTimeStamp(14)) &&
+              !booking.getStartDate().before(timeStampGenerator.getTimeStampNow())) {
+        filteredList.add(booking);
+      }
+    }
+    return filteredList;
+  }
 }
