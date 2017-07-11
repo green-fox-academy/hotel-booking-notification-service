@@ -40,13 +40,13 @@ public class NotificationApplication {
   }
 
   @PostConstruct
-  public void init(){
+  public void init() {
     NotificationApplication.staticReminderSender = reminderSender;
     NotificationApplication.staticBookingReminderFiltering = bookingReminderFiltering;
   }
 
   public static void main(String[] args) throws URISyntaxException, IOException, TimeoutException,
-                                                NoSuchAlgorithmException, KeyManagementException {
+          NoSuchAlgorithmException, KeyManagementException {
     SpringApplication.run(NotificationApplication.class, args);
     Log log = new Log();
     TickingQueueEventService tickingQueueEventService = new TickingQueueEventService(log);
@@ -60,9 +60,9 @@ public class NotificationApplication {
         List<Booking> bookingsWithinSevenDays = staticBookingReminderFiltering.findBookingsWithinSevenDays(bookings);
         List<Booking> bookingsWithinFourteenDays = staticBookingReminderFiltering.findBookingsWithinFourteenDays(bookings);
         try {
-          staticReminderSender.sendReminderMail(bookingsWithinOneDay);
-          staticReminderSender.sendReminderMail(bookingsWithinSevenDays);
           staticReminderSender.sendReminderMail(bookingsWithinFourteenDays);
+          staticReminderSender.sendReminderMail(bookingsWithinSevenDays);
+          staticReminderSender.sendReminderMail(bookingsWithinOneDay);
         } catch (IOException e) {
           log.error("reminder send in main() ", e.getMessage());
         }

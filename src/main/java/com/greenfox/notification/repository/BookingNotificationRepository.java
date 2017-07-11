@@ -4,6 +4,5 @@ import com.greenfox.notification.model.classes.booking.BookingNotification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
 public interface BookingNotificationRepository extends CrudRepository<BookingNotification, String> {
 }
