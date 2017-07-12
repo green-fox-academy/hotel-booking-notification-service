@@ -35,40 +35,36 @@ public class ReminderSender {
     this.timeStampGenerator = timeStampGenerator;
   }
 
-  public void sendReminderMail(List<Booking> bookingList) throws IOException {
+  public void sendReminderFourteenDaysBefore(List<Booking> bookingList) throws IOException {
     for (Booking booking : bookingList) {
-      if (bookingNotificationRepository.exists(booking.getEmail()) &&
-              booking.getStartDate().before(timeStampGenerator.getTimeStamp(1))
-              && !bookingNotificationRepository.findOne(booking.getEmail()).isNotifiedOneDayBefore()) {
+      if (!bookingNotificationRepository.exists(booking.getEmail())) {
         Mail mail = emailGenerator.generateReminderEmail(booking);
-        request.setMethod(Method.POST);
-        request.setEndpoint("mail/send");
-        request.setBody(mail.build());
-        response = sg.api(request);
-        BookingNotification bookingNotification = bookingNotificationRepository.findOne(booking.getEmail());
-        bookingNotification.setNotifiedOneDayBefore(true);
-        bookingNotificationRepository.save(bookingNotification);
-      } else if (bookingNotificationRepository.exists(booking.getEmail()) &&
-              booking.getStartDate().before(timeStampGenerator.getTimeStamp(7)) &&
-              booking.getStartDate().after(timeStampGenerator.getTimeStamp(6)) &&
-              !bookingNotificationRepository.findOne(booking.getEmail()).isNotifiedSevenDaysBefore()) {
+        response = sg.api(setRequestConfiguration(mail));
+        saveIntoRepository(booking.getEmail());
+      }
+    }
+  }
+
+  public void sendReminderSevenDaysBefore(List<Booking> bookingList) throws IOException {
+    for (Booking booking : bookingList) {
+      if (!bookingNotificationRepository.findOne(booking.getEmail()).isNotifiedSevenDaysBefore()) {
         Mail mail = emailGenerator.generateReminderEmail(booking);
-        request.setMethod(Method.POST);
-        request.setEndpoint("mail/send");
-        request.setBody(mail.build());
-        response = sg.api(request);
+        response = sg.api(setRequestConfiguration(mail));
         BookingNotification bookingNotification = bookingNotificationRepository.findOne(booking.getEmail());
         bookingNotification.setNotifiedSevenDaysBefore(true);
         bookingNotificationRepository.save(bookingNotification);
-      } else if (!bookingNotificationRepository.exists(booking.getEmail())) {
+      }
+    }
+  }
+
+  public void sendReminderOneDayBefore(List<Booking> bookingList) throws IOException {
+    for (Booking booking : bookingList) {
+      if (!bookingNotificationRepository.findOne(booking.getEmail()).isNotifiedOneDayBefore()) {
         Mail mail = emailGenerator.generateReminderEmail(booking);
-        request.setMethod(Method.POST);
-        request.setEndpoint("mail/send");
-        request.setBody(mail.build());
-        response = sg.api(request);
-        saveIntoRepository(booking.getEmail());
-      } else {
-        log.info("sendReminderMail method ", "Booking notification already in database.");
+        response = sg.api(setRequestConfiguration(mail));
+        BookingNotification bookingNotification = bookingNotificationRepository.findOne(booking.getEmail());
+        bookingNotification.setNotifiedOneDayBefore(true);
+        bookingNotificationRepository.save(bookingNotification);
       }
     }
   }
@@ -77,5 +73,12 @@ public class ReminderSender {
     BookingNotification bookingNotification = new BookingNotification(email);
     bookingNotification.setNotifiedFourteenDaysBefore(true);
     bookingNotificationRepository.save(bookingNotification);
+  }
+
+  private Request setRequestConfiguration(Mail mail) throws IOException {
+    request.setMethod(Method.POST);
+    request.setEndpoint("mail/send");
+    request.setBody(mail.build());
+    return request;
   }
 }
