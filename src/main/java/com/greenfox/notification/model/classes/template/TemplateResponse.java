@@ -1,6 +1,5 @@
 package com.greenfox.notification.model.classes.template;
 
-import com.greenfox.notification.model.classes.heartbeat.Data;
 import com.greenfox.notification.model.classes.unsubscription.Link;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 public class TemplateResponse {
   private Link links;
-  private Data data;
+  private TemplateData data;
   private Relationship relationships;
   private List<TemplateLanguageVersion> included;
-
-
 
 }
