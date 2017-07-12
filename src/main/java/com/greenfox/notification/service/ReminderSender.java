@@ -39,6 +39,7 @@ public class ReminderSender {
     for (Booking booking : bookingList) {
       if (!bookingNotificationRepository.exists(booking.getEmail())) {
         Mail mail = emailGenerator.generateReminderEmail(booking);
+        mail.personalization.get(0).addSubstitution("-day-", "14 days");
         response = sg.api(setRequestConfiguration(mail));
         saveIntoRepository(booking.getEmail());
       }
@@ -49,6 +50,7 @@ public class ReminderSender {
     for (Booking booking : bookingList) {
       if (!bookingNotificationRepository.findOne(booking.getEmail()).isNotifiedSevenDaysBefore()) {
         Mail mail = emailGenerator.generateReminderEmail(booking);
+        mail.personalization.get(0).addSubstitution("-day-", "7 days");
         response = sg.api(setRequestConfiguration(mail));
         BookingNotification bookingNotification = bookingNotificationRepository.findOne(booking.getEmail());
         bookingNotification.setNotifiedSevenDaysBefore(true);
