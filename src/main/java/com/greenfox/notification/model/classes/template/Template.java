@@ -7,9 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TemplateLanguages {
-  private String type;
+public class Template {
   private Long id;
-  private TemplateAttribute attributes;
-
+  private String type;
 }

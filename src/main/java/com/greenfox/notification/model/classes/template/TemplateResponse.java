@@ -16,7 +16,7 @@ public class TemplateResponse {
   private Link links;
   private Data data;
   private Relationship relationships;
-  private List<TemplateLanguages> included;
+  private List<TemplateLanguageVersion> included;
 
 
 

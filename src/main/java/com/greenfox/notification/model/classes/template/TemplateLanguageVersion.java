@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
-public class Relationship {
-  private Review reviews;
-  private List<Template> data;
+public class TemplateLanguageVersion {
+  private String type;
+  private Long id;
+  private TemplateAttribute attributes;
+
 }
