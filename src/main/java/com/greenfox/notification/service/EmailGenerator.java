@@ -29,7 +29,6 @@ public class EmailGenerator {
 
   public Mail generateReminderEmail(Booking booking) {
     Email recipient = new Email(booking.getEmail());
-    System.out.println(booking.getEmail() + " generateReminderEmail method");
     Content content = new Content("text/plain", "reminder");
     Mail mail = new Mail(sender, "Reminder", recipient, content);
     mail.personalization.get(0).addSubstitution("-name-", booking.getContactName());
