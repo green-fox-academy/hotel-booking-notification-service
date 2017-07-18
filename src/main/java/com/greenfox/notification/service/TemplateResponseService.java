@@ -34,7 +34,7 @@ public class TemplateResponseService implements Serializable {
 
   public TemplateResponse getTemplate(Long id) {
     templateResponse.setLinks(new Link(System.getenv("HOSTNAME") + "/api/emails/"
-                                        + id));
+                                      + id));
     templateResponse.getData().setId(id);
     templateResponse.getRelationships().getTemplates().getLinks().generateLinks(id);
     templateResponse.getRelationships().findTemplates();
@@ -45,6 +45,16 @@ public class TemplateResponseService implements Serializable {
   public Response addTemplate(TemplateAttribute templateAttribute) {
     templateAttributesRepository.save(templateAttribute);
     templateLanguageVersionRepository.save(new TemplateLanguageVersion(templateAttribute));
+    return new OkResponse();
+  }
+
+  public Response updateTemplate(Long id, TemplateAttribute templateAttribute) {
+    TemplateAttribute updatedTemplateAttribute = templateAttributesRepository.findOne(templateAttribute.getLanguage());
+    updatedTemplateAttribute.setText(templateAttribute.getText());
+    TemplateLanguageVersion templateLanguageVersion = templateLanguageVersionRepository.findOne(id);
+    templateLanguageVersion.getAttributes().setText(templateAttribute.getText());
+    templateAttributesRepository.save(updatedTemplateAttribute);
+    templateLanguageVersionRepository.save(templateLanguageVersion);
     return new OkResponse();
   }
 }

@@ -25,4 +25,9 @@ public class EmailTemplateController {
   public Response addTemplate(@RequestBody TemplateAttribute templateAttribute) {
     return templateResponseService.addTemplate(templateAttribute);
   }
+
+  @PutMapping("/templates/{id}/update")
+  public Response updateTemplate(@PathVariable("id") Long id, @RequestBody TemplateAttribute templateAttribute){
+    return templateResponseService.updateTemplate(id, templateAttribute);
+  }
 }

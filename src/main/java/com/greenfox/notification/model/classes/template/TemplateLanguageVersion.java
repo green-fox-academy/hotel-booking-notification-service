@@ -25,4 +25,7 @@ public class TemplateLanguageVersion implements Serializable {
     this.type = "templates";
     this.attributes = attributes;
   }
+
+  public TemplateLanguageVersion(){
+  }
 }
