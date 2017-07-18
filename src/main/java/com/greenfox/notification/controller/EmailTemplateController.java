@@ -1,11 +1,11 @@
 package com.greenfox.notification.controller;
 
+import com.greenfox.notification.model.classes.template.TemplateAttribute;
 import com.greenfox.notification.model.classes.template.TemplateResponse;
+import com.greenfox.notification.model.interfaces.Response;
 import com.greenfox.notification.service.TemplateResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class EmailTemplateController {
@@ -17,7 +17,12 @@ public class EmailTemplateController {
   }
 
   @GetMapping("/templates/{id}")
-  public TemplateResponse listTemplates(@PathVariable("id") Long id){
-    return templateResponseService.getTemplates(id);
+  public TemplateResponse showTemplate(@PathVariable("id") Long id) {
+    return templateResponseService.getTemplate(id);
+  }
+
+  @PostMapping("/templates/add")
+  public Response addTemplate(@RequestBody TemplateAttribute templateAttribute) {
+    return templateResponseService.addTemplate(templateAttribute);
   }
 }
