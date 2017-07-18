@@ -5,12 +5,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-public class TemplateLanguageVersion {
+public class TemplateLanguageVersion implements Serializable {
   private String type;
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

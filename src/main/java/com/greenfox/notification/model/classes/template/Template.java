@@ -1,14 +1,18 @@
 package com.greenfox.notification.model.classes.template;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Component
 public class Template {
-  private Long id;
-  private String type;
+  private TemplateLink links;
 
+  @Autowired
+  public Template(TemplateLink templateLink) {
+    this.links = templateLink;
+  }
 }

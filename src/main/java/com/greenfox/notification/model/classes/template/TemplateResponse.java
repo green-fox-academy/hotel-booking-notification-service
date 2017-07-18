@@ -2,22 +2,25 @@ package com.greenfox.notification.model.classes.template;
 
 import com.greenfox.notification.model.classes.unsubscription.Link;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.aspectj.asm.internal.Relationship;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Component
-public class TemplateResponse {
+public class TemplateResponse implements Serializable {
   private Link links;
   private TemplateData data;
-  private Relationship relationships;
+  private com.greenfox.notification.model.classes.template.Relationship relationships;
   private List<TemplateLanguageVersion> included;
 
-
+  @Autowired
+  public TemplateResponse(Relationship relationships){
+    this.data = new TemplateData();
+    this.relationships = relationships;
+  }
 }
