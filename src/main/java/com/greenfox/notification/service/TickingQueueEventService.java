@@ -22,7 +22,6 @@ import java.util.concurrent.TimeoutException;
   private final Log log;
   private TickEvent tickEvent;
 
-
   @Autowired
   public TickingQueueEventService(Log log) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, TimeoutException {
     this.connectionFactory = new ConnectionFactory();

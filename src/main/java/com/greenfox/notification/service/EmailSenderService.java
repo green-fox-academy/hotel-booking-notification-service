@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailSenderService {
+  private final UnsubscribeFiltering unsubscribeFiltering;
   private final Log log;
   private Request request;
   private SendGrid sg;
@@ -14,7 +15,8 @@ public class EmailSenderService {
   private final EmailGenerator emailGenerator;
 
   @Autowired
-  public EmailSenderService(Log log, RabbitMQ rabbitMQ, EmailGenerator emailGenerator) {
+  public EmailSenderService(UnsubscribeFiltering unsubscribeFiltering, Log log, RabbitMQ rabbitMQ, EmailGenerator emailGenerator) {
+    this.unsubscribeFiltering = unsubscribeFiltering;
     this.log = log;
     this.request = new Request();
     this.sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
@@ -23,13 +25,16 @@ public class EmailSenderService {
   }
 
   public Mail sendConfirmationEmail(String servletRequest, Data data) throws Exception {
-    Mail mail = emailGenerator.generateEmail(data);
-    request.setMethod(Method.POST);
-    request.setEndpoint("mail/send");
-    request.setBody(mail.build());
-    Response response = sg.api(request);
-    log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
-    return mail;
+    if (!unsubscribeFiltering.checkIfUserUnsubscribed(data)) {
+      Mail mail = emailGenerator.generateEmail(data);
+      request.setMethod(Method.POST);
+      request.setEndpoint("mail/send");
+      request.setBody(mail.build());
+      Response response = sg.api(request);
+      log.info(servletRequest, (response.getStatusCode() + " " + response.getBody() + " " + response.getHeaders()));
+      return mail;
+    }
+    return null;
   }
 
   public void pushEmail(String servletRequest, Mail mail) {

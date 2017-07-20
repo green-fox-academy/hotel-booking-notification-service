@@ -18,7 +18,4 @@ public class Unsubscription implements Response {
     this.links = links;
     this.data = data;
   }
-
-
-
 }

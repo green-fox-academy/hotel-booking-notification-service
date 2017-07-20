@@ -46,6 +46,7 @@ public class NotificationApplication {
 
   public static void main(String[] args) throws URISyntaxException, IOException, TimeoutException,
           NoSuchAlgorithmException, KeyManagementException {
+
     SpringApplication.run(NotificationApplication.class, args);
     Log log = new Log();
     TickingQueueEventService tickingQueueEventService = new TickingQueueEventService(log);
@@ -54,6 +55,7 @@ public class NotificationApplication {
     timer.schedule(new TimerTask() {
       @Override
       public void run() {
+
         Bookings bookings = restTemplate.getForObject("http://localhost:8080/bookings", Bookings.class);
         List<Booking> bookingsWithinOneDay = staticBookingReminderFiltering.findBookingsWithinOneDay(bookings);
         List<Booking> bookingsWithinSevenDays = staticBookingReminderFiltering.findBookingsWithinSevenDays(bookings);
@@ -72,7 +74,7 @@ public class NotificationApplication {
           log.error("ticking que", e.getMessage());
         }
       }
-    }, 0, 1000 * 1 * MINUTES);
+
+    }, 0, 1000 * 60 * MINUTES);
   }
 }
-

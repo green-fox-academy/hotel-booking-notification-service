@@ -1,9 +1,10 @@
 package com.greenfox.notification.service;
 
+import org.springframework.stereotype.Service;
+
+import javax.persistence.Embeddable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.persistence.Embeddable;
-import org.springframework.stereotype.Service;
 
 @Service
 @Embeddable
@@ -14,5 +15,4 @@ public class SimpleDateService {
     simpleDateFormat.format(date);
     return date;
   }
-
 }
