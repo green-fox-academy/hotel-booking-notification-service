@@ -14,7 +14,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
@@ -48,8 +47,6 @@ public class ServiceTests {
   private Data mockData;
   private TimeStampGenerator timeStampGenerator = new TimeStampGenerator();
   private BookingReminderFiltering bookingReminderFiltering = new BookingReminderFiltering(timeStampGenerator);
-//  private List<Booking> bookingList = new ArrayList<>();
-//  private Bookings bookings = new Bookings();
 
   @Before
   public void setup() throws Exception {
@@ -67,11 +64,6 @@ public class ServiceTests {
     ConnectionFactory factory = new ConnectionFactory();
     factory.setUri(System.getenv("RABBITMQ_BIGWIG_TX_URL"));
     Connection connection = factory.newConnection();
-//    bookingList.add(new Booking(1L, 2, timeStampGenerator.getTimeStamp(1),
-//            timeStampGenerator.getTimeStampNow(), timeStampGenerator.getTimeStampNow(),
-//            "contactName", "test@test.com"));
-//    bookings.setBookingList(bookingList);
-    
   }
 
   @Before
@@ -161,7 +153,6 @@ public class ServiceTests {
 
   @Test
   public void testSendEmail() throws Exception {
-    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest("/post", "/testendpoint");
     when(mockEmailGenerator.generateEmail(mockData)).thenReturn(mockMail);
     doAnswer(invocation -> {
       Object[] args = invocation.getArguments();
