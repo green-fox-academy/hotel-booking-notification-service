@@ -20,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.nio.charset.Charset;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -36,7 +37,6 @@ public class ControllerTests {
 
   @Autowired
   private WebApplicationContext webApplicationContext;
-
   @Autowired
   private HeartbeatRepository heartbeatRepository;
 
@@ -70,5 +70,42 @@ public class ControllerTests {
             .andExpect(jsonPath("$.database").value("ok"))
             .andExpect(jsonPath("$.queue").value("ok"));
     heartbeatRepository.deleteAll();
+  }
+
+  @Test
+  public void testUnsubscribeWithValidFields() throws Exception {
+    mockMvc.perform(post("/unsubscriptions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\n" +
+                    "     \"data\": {\n" +
+                    "       \"type\": \"unsubscribtions\",\n" +
+                    "       \"attributes\": {\n" +
+                    "         \"email\": \"john.doe@example.org\",\n" +
+                    "         \"created_at\": \"2017-06-26T14:05:10+0000\" \n" +
+                    "       }\n" +
+                    "     }\n" +
+                    "   }"))
+            .andExpect(content().contentType(contentType))
+            .andExpect(jsonPath("$.links.self").value(System.getenv("HOSTNAME") + "/unsubscriptions/1"))
+            .andExpect(jsonPath("$.data.id").value("1"))
+            .andExpect(status().isOk());
+  }
+
+  @Test
+  public void testUnsubscribeWithInvalidFields() throws Exception {
+    mockMvc.perform(post("/unsubscriptions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\n" +
+                    "     \"data\": {\n" +
+                    "       \"type\": \"unsubscribtions\",\n" +
+                    "       \"attributes\": {\n" +
+                    "         \"created_at\": \"2017-06-26T14:05:10+0000\" \n" +
+                    "       }\n" +
+                    "     }\n" +
+                    "   }"))
+            .andExpect(content().contentType(contentType))
+            .andExpect(jsonPath("$.errors.[0].status").value("400"))
+            .andExpect(jsonPath("$.errors.[0].title").value("Bad Request"))
+            .andExpect(jsonPath("$.errors.[0].detail").value("The attribute field: \"email\" is missing"));
   }
 }

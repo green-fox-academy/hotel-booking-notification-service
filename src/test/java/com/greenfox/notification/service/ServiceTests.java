@@ -1,11 +1,18 @@
 package com.greenfox.notification.service;
 
 import com.greenfox.notification.model.classes.DatabaseResponse;
-import com.greenfox.notification.model.classes.booking.Booking;
-import com.greenfox.notification.model.classes.booking.Bookings;
+
 import com.greenfox.notification.model.classes.heartbeat.Data;
 import com.greenfox.notification.model.classes.registration.Attribute;
+import com.greenfox.notification.model.classes.unsubscription.Error;
+import com.greenfox.notification.model.classes.unsubscription.*;
+
+import com.greenfox.notification.model.classes.booking.Booking;
+import com.greenfox.notification.model.classes.booking.Bookings;
+
 import com.greenfox.notification.repository.HeartbeatRepository;
+import com.greenfox.notification.repository.UnsubscribeAttributeRepository;
+import com.greenfox.notification.repository.UnsubscribeDataRepository;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.sendgrid.*;
@@ -21,6 +28,7 @@ import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -45,6 +53,14 @@ public class ServiceTests {
   private Mail mockMail;
   private EmailGenerator mockEmailGenerator;
   private Data mockData;
+  private UnsubscribeAttributeRepository unsubscribeAttributeRepositoryMock;
+  private UnsubscribeDataRepository unsubscribeDataRepositoryMock;
+  private UnsubscribeAttribute unsubscribeAttribute = new UnsubscribeAttribute();
+  private UnsubscribeData unsubscribeData = new UnsubscribeData(unsubscribeAttribute);
+  private UnsubscribeInput unsubscribeInput = new UnsubscribeInput(unsubscribeData);
+  private SimpleDateService simpleDateService = new SimpleDateService();
+  private SimpleDateService simpleDateServiceMock;
+  private Errors errors = new Errors(new Error());
   private TimeStampGenerator timeStampGenerator = new TimeStampGenerator();
   private BookingReminderFiltering bookingReminderFiltering = new BookingReminderFiltering(timeStampGenerator);
 
@@ -61,6 +77,9 @@ public class ServiceTests {
     mockMail = Mockito.mock(Mail.class);
     mockEmailGenerator = Mockito.mock(EmailGenerator.class);
     mockData = Mockito.mock(Data.class);
+    unsubscribeAttributeRepositoryMock = Mockito.mock(UnsubscribeAttributeRepository.class);
+    unsubscribeDataRepositoryMock = Mockito.mock(UnsubscribeDataRepository.class);
+    simpleDateServiceMock = Mockito.mock(SimpleDateService.class);
     ConnectionFactory factory = new ConnectionFactory();
     factory.setUri(System.getenv("RABBITMQ_BIGWIG_TX_URL"));
     Connection connection = factory.newConnection();
@@ -165,6 +184,46 @@ public class ServiceTests {
   }
 
   @Test
+  public void testUnsubscribeServiceInvalidFields() throws Exception {
+    UnsubscriptionResponseService unsubscriptionResponseService =
+            new UnsubscriptionResponseService(simpleDateService, unsubscribeAttributeRepositoryMock,
+                    unsubscribeDataRepositoryMock, errors);
+    Errors errors = (Errors) unsubscriptionResponseService.letUsersUnsubscribe(unsubscribeInput);
+    assertNotNull(errors.getErrors());
+    assertEquals("400", errors.getErrors().get(0).getStatus());
+    assertEquals("Bad Request", errors.getErrors().get(0).getTitle());
+    assertEquals("The attribute field: \"email\" is missing", errors.getErrors().get(0).getDetail());
+  }
+
+  @Test
+  public void testUnsubscribeServiceValidFields() throws Exception {
+    UnsubscriptionResponseService unsubscriptionResponseService =
+            new UnsubscriptionResponseService(simpleDateService, unsubscribeAttributeRepositoryMock,
+                    unsubscribeDataRepositoryMock, errors);
+    unsubscribeInput.getData().getAttributes().setEmail("test@test.com");
+    unsubscribeInput.getData().setId(1L);
+    Unsubscription response = (Unsubscription) unsubscriptionResponseService.letUsersUnsubscribe(unsubscribeInput);
+    assertEquals(System.getenv("HOSTNAME") + "/unsubscriptions/1", response.getLinks().getSelf());
+    assertNotNull(response.getData().getAttributes().getCreatedAt());
+    assertTrue(1L == response.getData().getId());
+    assertEquals("test@test.com", response.getData().getAttributes().getEmail());
+  }
+
+  @Test
+  public void testSimpleDateFormatService() throws Exception {
+    UnsubscriptionResponseService unsubscriptionResponseService =
+            new UnsubscriptionResponseService(simpleDateServiceMock, unsubscribeAttributeRepositoryMock,
+                    unsubscribeDataRepositoryMock, errors);
+    unsubscribeInput.getData().getAttributes().setEmail("test@test.com");
+    UnsubscribeAttribute unsubscribeAttribute = unsubscribeInput.getData().getAttributes();
+    unsubscribeAttribute.setCreatedAt(null);
+    Date date = new Date();
+    when(simpleDateServiceMock.getSimpleDateFormat()).thenReturn(date);
+    Unsubscription response = (Unsubscription) unsubscriptionResponseService.letUsersUnsubscribe(unsubscribeInput);
+    assertEquals(date, response.getData().getAttributes().getCreatedAt());
+  }
+
+  @Test
   public void testForFilteringBookingsOneDayLeft() throws InterruptedException {
     List<Booking> bookingList = new ArrayList<>();
     Bookings bookings = new Bookings();
@@ -206,4 +265,5 @@ public class ServiceTests {
     assertEquals(filteredList, bookingList);
   }
 }
+
 
