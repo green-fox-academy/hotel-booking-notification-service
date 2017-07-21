@@ -1,10 +1,17 @@
 package com.greenfox.notification.service;
 
 import com.greenfox.notification.model.classes.DatabaseResponse;
+
 import com.greenfox.notification.model.classes.heartbeat.Data;
 import com.greenfox.notification.model.classes.registration.Attribute;
 import com.greenfox.notification.model.classes.unsubscription.Error;
 import com.greenfox.notification.model.classes.unsubscription.*;
+
+import com.greenfox.notification.model.classes.booking.Booking;
+import com.greenfox.notification.model.classes.booking.Bookings;
+import com.greenfox.notification.model.classes.heartbeat.Data;
+import com.greenfox.notification.model.classes.registration.Attribute;
+
 import com.greenfox.notification.repository.HeartbeatRepository;
 import com.greenfox.notification.repository.UnsubscribeAttributeRepository;
 import com.greenfox.notification.repository.UnsubscribeDataRepository;
@@ -21,8 +28,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+
 import java.util.Date;
+
+import java.util.List;
+
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
@@ -46,6 +58,7 @@ public class ServiceTests {
   private Mail mockMail;
   private EmailGenerator mockEmailGenerator;
   private Data mockData;
+
   private UnsubscribeAttributeRepository unsubscribeAttributeRepositoryMock;
   private UnsubscribeDataRepository unsubscribeDataRepositoryMock;
   private UnsubscribeAttribute unsubscribeAttribute = new UnsubscribeAttribute();
@@ -54,6 +67,10 @@ public class ServiceTests {
   private SimpleDateService simpleDateService = new SimpleDateService();
   private SimpleDateService simpleDateServiceMock;
   private Errors errors = new Errors(new Error());
+
+  private TimeStampGenerator timeStampGenerator = new TimeStampGenerator();
+  private BookingReminderFiltering bookingReminderFiltering = new BookingReminderFiltering(timeStampGenerator);
+
 
   @Before
   public void setup() throws Exception {
@@ -175,6 +192,7 @@ public class ServiceTests {
   }
 
   @Test
+
   public void testUnsubscribeServiceInvalidFields() throws Exception {
     UnsubscriptionResponseService unsubscriptionResponseService =
             new UnsubscriptionResponseService(simpleDateService, unsubscribeAttributeRepositoryMock,
@@ -212,6 +230,47 @@ public class ServiceTests {
     when(simpleDateServiceMock.getSimpleDateFormat()).thenReturn(date);
     Unsubscription response = (Unsubscription) unsubscriptionResponseService.letUsersUnsubscribe(unsubscribeInput);
     assertEquals(date, response.getData().getAttributes().getCreatedAt());
+
+  @Test
+    public void testForFilteringBookingsOneDayLeft() throws InterruptedException {
+    List<Booking> bookingList = new ArrayList<>();
+    Bookings bookings = new Bookings();
+    bookingList.add(new Booking(1L, 2, timeStampGenerator.getTimeStamp(1),
+            timeStampGenerator.getTimeStampNow(), timeStampGenerator.getTimeStampNow(),
+            "contactName", "test@test.com"));
+    bookings.setBookingList(bookingList);
+    Thread.sleep(10000L);
+    List<Booking> filteredList = bookingReminderFiltering.findBookingsWithinOneDay(bookings);
+    assertTrue(filteredList.size() == 1);
+    assertEquals(filteredList, bookingList);
+  }
+
+  @Test
+  public void testForFilteringBookingsSevenDayLeft() throws InterruptedException {
+    List<Booking> bookingList = new ArrayList<>();
+    Bookings bookings = new Bookings();
+    bookingList.add(new Booking(1L, 2, timeStampGenerator.getTimeStamp(7),
+            timeStampGenerator.getTimeStampNow(), timeStampGenerator.getTimeStampNow(),
+            "contactName", "test@test.com"));
+    bookings.setBookingList(bookingList);
+    Thread.sleep(10000L);
+    List<Booking> filteredList = bookingReminderFiltering.findBookingsWithinSevenDays(bookings);
+    assertTrue(filteredList.size() == 1);
+    assertEquals(filteredList, bookingList);
+  }
+
+  @Test
+  public void testForFilteringBookingsFourteenDaysLeft() throws InterruptedException {
+    List<Booking> bookingList = new ArrayList<>();
+    Bookings bookings = new Bookings();
+    bookingList.add(new Booking(1L, 2, timeStampGenerator.getTimeStamp(14),
+            timeStampGenerator.getTimeStampNow(), timeStampGenerator.getTimeStampNow(),
+            "contactName", "test@test.com"));
+    bookings.setBookingList(bookingList);
+    Thread.sleep(10000L);
+    List<Booking> filteredList = bookingReminderFiltering.findBookingsWithinFourteenDays(bookings);
+    assertTrue(filteredList.size() == 1);
+    assertEquals(filteredList, bookingList);
   }
 }
 
