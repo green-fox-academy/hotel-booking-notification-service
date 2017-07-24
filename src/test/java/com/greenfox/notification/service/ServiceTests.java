@@ -26,10 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
@@ -172,15 +169,16 @@ public class ServiceTests {
 
   @Test
   public void testSendEmail() throws Exception {
-    when(mockEmailGenerator.generateEmail(mockData)).thenReturn(mockMail);
-    doAnswer(invocation -> {
-      Object[] args = invocation.getArguments();
-      System.out.println("called with arguments: " + Arrays.toString(args));
-      return null;
-    }).when(mockRequest).setEndpoint("mail/send");
-    when(mockSg.api(mockRequest)).thenReturn(mockResponse);
-    emailSenderServiceMock.sendConfirmationEmail("test", mockData);
+    Data data = new Data("type", new Attribute("test@test.com", "testName", "testUrl"));
+    when(mockEmailGenerator.generateEmail(data)).thenReturn(mockMail);
+    doAnswer(invocation -> null).when(mockRequest).setMethod(Method.POST);
+    doAnswer(invocation -> null).when(mockRequest).setEndpoint("mail/send");
+    Response response = new Response(200, data.getAttributes().getEmail(), new HashMap<>());
+    when(mockSg.api(mockRequest)).thenReturn(response);
+    when(emailSenderServiceMock.sendConfirmationEmail("test", data)).thenReturn(mockMail);
     assertThat(mockMail, is(notNullValue()));
+    assertEquals(mockEmailGenerator.generateEmail(data), emailSenderServiceMock.sendConfirmationEmail("test", data));
+    assertTrue(mockSg.api(mockRequest).getBody().contains("test@test.com"));
   }
 
   @Test
