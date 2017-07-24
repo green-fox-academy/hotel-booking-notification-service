@@ -45,11 +45,9 @@ public class ServiceTests {
   private HttpServletRequest requestMock;
   private SendGrid mockSg;
   private Request mockRequest;
-  private Response mockResponse;
   private EmailSenderService emailSenderServiceMock;
   private Mail mockMail;
   private EmailGenerator mockEmailGenerator;
-  private Data mockData;
   private UnsubscribeAttributeRepository unsubscribeAttributeRepositoryMock;
   private UnsubscribeDataRepository unsubscribeDataRepositoryMock;
   private UnsubscribeAttribute unsubscribeAttribute = new UnsubscribeAttribute();
@@ -69,11 +67,9 @@ public class ServiceTests {
     requestMock = Mockito.mock(HttpServletRequest.class);
     mockSg = Mockito.mock(SendGrid.class);
     mockRequest = Mockito.mock(Request.class);
-    mockResponse = Mockito.mock(Response.class);
     emailSenderServiceMock = Mockito.mock(EmailSenderService.class);
     mockMail = Mockito.mock(Mail.class);
     mockEmailGenerator = Mockito.mock(EmailGenerator.class);
-    mockData = Mockito.mock(Data.class);
     unsubscribeAttributeRepositoryMock = Mockito.mock(UnsubscribeAttributeRepository.class);
     unsubscribeDataRepositoryMock = Mockito.mock(UnsubscribeDataRepository.class);
     simpleDateServiceMock = Mockito.mock(SimpleDateService.class);
@@ -229,7 +225,7 @@ public class ServiceTests {
             timeStampGenerator.getTimeStampNow(), timeStampGenerator.getTimeStampNow(),
             "contactName", "test@test.com"));
     bookings.setBookingList(bookingList);
-    Thread.sleep(10000L);
+    Thread.sleep(1000L);
     List<Booking> filteredList = bookingReminderFiltering.findBookingsWithinOneDay(bookings);
     assertTrue(filteredList.size() == 1);
     assertEquals(filteredList, bookingList);
@@ -243,7 +239,7 @@ public class ServiceTests {
             timeStampGenerator.getTimeStampNow(), timeStampGenerator.getTimeStampNow(),
             "contactName", "test@test.com"));
     bookings.setBookingList(bookingList);
-    Thread.sleep(10000L);
+    Thread.sleep(1000L);
     List<Booking> filteredList = bookingReminderFiltering.findBookingsWithinSevenDays(bookings);
     assertTrue(filteredList.size() == 1);
     assertEquals(filteredList, bookingList);
@@ -257,7 +253,7 @@ public class ServiceTests {
             timeStampGenerator.getTimeStampNow(), timeStampGenerator.getTimeStampNow(),
             "contactName", "test@test.com"));
     bookings.setBookingList(bookingList);
-    Thread.sleep(10000L);
+    Thread.sleep(1000L);
     List<Booking> filteredList = bookingReminderFiltering.findBookingsWithinFourteenDays(bookings);
     assertTrue(filteredList.size() == 1);
     assertEquals(filteredList, bookingList);

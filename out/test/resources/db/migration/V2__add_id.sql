@@ -1,0 +1,5 @@
+
+ALTER TABLE heartbeat
+    DROP PRIMARY KEY ;
+ALTER TABLE  heartbeat
+    ADD id INT AUTO_INCREMENT;
