@@ -63,7 +63,7 @@ public class NotificationApplication {
     timer.schedule(new TimerTask() {
       @Override
       public void run() {
-        Bookings bookings = restTemplate.getForObject("http://localhost:8080/bookings", Bookings.class);
+        Bookings bookings = restTemplate.getForObject(System.getenv("HOSTNAME") + "/bookings", Bookings.class);
         List<Booking> bookingsWithinOneDay = staticBookingReminderFiltering.findBookingsWithinOneDay(bookings);
         List<Booking> bookingsWithinSevenDays = staticBookingReminderFiltering.findBookingsWithinSevenDays(bookings);
         List<Booking> bookingsWithinFourteenDays = staticBookingReminderFiltering.findBookingsWithinFourteenDays(bookings);

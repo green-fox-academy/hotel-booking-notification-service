@@ -1,0 +1,1 @@
+CREATE TABLE email_template(id INTEGER NOT NULL , PRIMARY KEY (id), type VARCHAR(255));
