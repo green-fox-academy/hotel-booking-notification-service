@@ -36,6 +36,7 @@ public class NotificationApplication {
   private final Log log;
   private final TickingQueueEventService tickingQueueEventService;
   private static int minutes;
+  private static final String URL = "https://" + System.getenv("HOSTNAME") + "/bookings";
 
   @Autowired
   public NotificationApplication(ReminderSender reminderSender, BookingReminderFiltering bookingReminderFiltering,
@@ -63,7 +64,7 @@ public class NotificationApplication {
     timer.schedule(new TimerTask() {
       @Override
       public void run() {
-        Bookings bookings = restTemplate.getForObject("https://" + System.getenv("HOSTNAME") + "/bookings", Bookings.class);
+        Bookings bookings = restTemplate.getForObject(URL, Bookings.class);
         List<Booking> bookingsWithinOneDay = staticBookingReminderFiltering.findBookingsWithinOneDay(bookings);
         List<Booking> bookingsWithinSevenDays = staticBookingReminderFiltering.findBookingsWithinSevenDays(bookings);
         List<Booking> bookingsWithinFourteenDays = staticBookingReminderFiltering.findBookingsWithinFourteenDays(bookings);
