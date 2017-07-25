@@ -5,12 +5,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "email_template")
 public class EmailTemplate {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,6 +18,5 @@ public class EmailTemplate {
   @OneToOne
   @JoinColumn(name = "text")
   private TemplateLanguageVersion templateLanguageVersion;
-  @ElementCollection
-  private List<String> fields;
+  private String fields;
 }
