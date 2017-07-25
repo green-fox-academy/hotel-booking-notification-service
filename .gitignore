@@ -13,6 +13,7 @@
 ### IntelliJ IDEA ###
 .idea
 /out/*
+/production
 *.iws
 *.iml
 *.ipr
