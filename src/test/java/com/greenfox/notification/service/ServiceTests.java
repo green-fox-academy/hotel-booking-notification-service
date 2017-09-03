@@ -244,7 +244,7 @@ public class ServiceTests {
     List<Booking> filteredList = BookingReminderFiltering.findBookings(bookings, booking ->
         booking.getStartDate().before(timeStampGenerator.getTimeStamp(7)) &&
         booking.getStartDate().after(timeStampGenerator.getTimeStamp(6)) &&
-        booking.getStartDate().before(timeStampGenerator.getTimeStampNow()));
+        !booking.getStartDate().before(timeStampGenerator.getTimeStampNow()));
     assertTrue(filteredList.size() == 1);
     assertEquals(filteredList, bookingList);
   }
