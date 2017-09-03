@@ -57,7 +57,6 @@ public class ServiceTests {
   private SimpleDateService simpleDateServiceMock;
   private Errors errors = new Errors(new Error());
   private TimeStampGenerator timeStampGenerator = new TimeStampGenerator();
-  private BookingReminderFiltering bookingReminderFiltering = new BookingReminderFiltering(timeStampGenerator);
 
   @Before
   public void setup() throws Exception {
@@ -226,7 +225,9 @@ public class ServiceTests {
             "contactName", "test@test.com"));
     bookings.setBookingList(bookingList);
     Thread.sleep(1000L);
-    List<Booking> filteredList = bookingReminderFiltering.findBookingsWithinOneDay(bookings);
+    List<Booking> filteredList = BookingReminderFiltering.findBookings(bookings, booking ->
+        booking.getStartDate().before(timeStampGenerator.getTimeStamp(1)) &&
+        !booking.getStartDate().before(timeStampGenerator.getTimeStampNow()));
     assertTrue(filteredList.size() == 1);
     assertEquals(filteredList, bookingList);
   }
@@ -240,7 +241,10 @@ public class ServiceTests {
             "contactName", "test@test.com"));
     bookings.setBookingList(bookingList);
     Thread.sleep(1000L);
-    List<Booking> filteredList = bookingReminderFiltering.findBookingsWithinSevenDays(bookings);
+    List<Booking> filteredList = BookingReminderFiltering.findBookings(bookings, booking ->
+        booking.getStartDate().before(timeStampGenerator.getTimeStamp(7)) &&
+        booking.getStartDate().after(timeStampGenerator.getTimeStamp(6)) &&
+        booking.getStartDate().before(timeStampGenerator.getTimeStampNow()));
     assertTrue(filteredList.size() == 1);
     assertEquals(filteredList, bookingList);
   }
@@ -254,7 +258,10 @@ public class ServiceTests {
             "contactName", "test@test.com"));
     bookings.setBookingList(bookingList);
     Thread.sleep(1000L);
-    List<Booking> filteredList = bookingReminderFiltering.findBookingsWithinFourteenDays(bookings);
+    List<Booking> filteredList = BookingReminderFiltering.findBookings(bookings, booking ->
+        booking.getStartDate().before(timeStampGenerator.getTimeStamp(14)) &&
+        booking.getStartDate().after(timeStampGenerator.getTimeStamp(13)) &&
+        !booking.getStartDate().before(timeStampGenerator.getTimeStampNow()));
     assertTrue(filteredList.size() == 1);
     assertEquals(filteredList, bookingList);
   }
