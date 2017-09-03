@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 @Service
 @Getter
@@ -25,6 +26,9 @@ public class EmailTimerService {
   private final TimeStampGenerator timeStampGenerator;
   private final ReminderSender reminderSender;
   private static final String URL = "https://" + System.getenv("HOSTNAME") + "/bookings";
+  private final Predicate<Booking> oneDayToStart;
+  private final Predicate<Booking> sevenDaysToStart;
+  private final Predicate<Booking> fourteenDaysToStart;
 
   @Autowired
   public EmailTimerService(ReminderSender reminderSender, TickingQueueEventService tickingQueueEventService,
@@ -35,22 +39,25 @@ public class EmailTimerService {
     this.tickingQueueEventService = tickingQueueEventService;
     this.timeStampGenerator = timeStampGenerator;
     this.interval = 15;
+    this.oneDayToStart =  booking ->
+        booking.getStartDate().before(timeStampGenerator.getTimeStamp(1)) &&
+            !booking.getStartDate().before(timeStampGenerator.getTimeStampNow());
+    this.sevenDaysToStart = booking ->
+        booking.getStartDate().before(timeStampGenerator.getTimeStamp(7)) &&
+            booking.getStartDate().after(timeStampGenerator.getTimeStamp(6)) &&
+            !booking.getStartDate().before(timeStampGenerator.getTimeStampNow());
+    this.fourteenDaysToStart = booking ->
+        booking.getStartDate().before(timeStampGenerator.getTimeStamp(14)) &&
+            booking.getStartDate().after(timeStampGenerator.getTimeStamp(13)) &&
+            !booking.getStartDate().before(timeStampGenerator.getTimeStampNow());
   }
 
   private Runnable createTask() {
     Runnable task = () -> {
       Bookings bookings = restTemplate.getForObject(URL, Bookings.class);
-      List<Booking> bookingsWithinOneDay = BookingReminderFiltering.findBookings(bookings, booking ->
-          booking.getStartDate().before(timeStampGenerator.getTimeStamp(1)) &&
-          !booking.getStartDate().before(timeStampGenerator.getTimeStampNow()));
-      List<Booking> bookingsWithinSevenDays = BookingReminderFiltering.findBookings(bookings, booking ->
-          booking.getStartDate().before(timeStampGenerator.getTimeStamp(7)) &&
-          booking.getStartDate().after(timeStampGenerator.getTimeStamp(6)) &&
-          !booking.getStartDate().before(timeStampGenerator.getTimeStampNow()));
-      List<Booking> bookingsWithinFourteenDays = BookingReminderFiltering.findBookings(bookings, booking ->
-          booking.getStartDate().before(timeStampGenerator.getTimeStamp(14)) &&
-          booking.getStartDate().after(timeStampGenerator.getTimeStamp(13)) &&
-          !booking.getStartDate().before(timeStampGenerator.getTimeStampNow()));
+      List<Booking> bookingsWithinOneDay = BookingReminderFiltering.findBookings(bookings, oneDayToStart);
+      List<Booking> bookingsWithinSevenDays = BookingReminderFiltering.findBookings(bookings, sevenDaysToStart);
+      List<Booking> bookingsWithinFourteenDays = BookingReminderFiltering.findBookings(bookings, fourteenDaysToStart);
       try {
         reminderSender.sendReminderFourteenDaysBefore(bookingsWithinFourteenDays);
         reminderSender.sendReminderSevenDaysBefore(bookingsWithinSevenDays);
